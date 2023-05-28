@@ -4,6 +4,7 @@ import lombok.Data;
 
 @Data
 public class UploadBag {
-    private byte[] fileBytes, thumbnailBytes;
+    private byte[] fileBytes;
+    private byte[] thumbnailBytes;
     private Photo photo;
 }

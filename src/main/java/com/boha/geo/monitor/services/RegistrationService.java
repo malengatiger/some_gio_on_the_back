@@ -92,7 +92,6 @@ public class RegistrationService {
         p0.setOrganizationId(organization.getOrganizationId());
         p0.setMonitorMaxDistanceInMetres(200);
         List<City> list = listService.findCitiesByLocation(latitude, longitude, 5);
-        p0.setNearestCities(list);
         projectRepository.insert(p0);
         LOGGER.info(E.LEAF + E.LEAF + " Sample Organization Project added: " + p0.getName());
 

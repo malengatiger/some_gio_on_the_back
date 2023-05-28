@@ -8,15 +8,9 @@ import java.util.List;
 @Data
 @Document(collection = "questionnaireResponses")
 public class QuestionnaireResponse {
-    /*
     private String  _partitionKey;
-                                 @Id private String  _id; 
-                                 private String  questionnaireResponseId; 
-                                 private String  questionnaireId;
-                                 private User  user;
-                                 private List<Section>  sections;
-     */
-    private String  _partitionKey;
+    @Id
+    private String  _id;
     private String  questionnaireResponseId;
     private String  questionnaireId;
     private User  user;

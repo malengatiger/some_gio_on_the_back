@@ -2,11 +2,16 @@ package com.boha.geo.monitor.data;
 
 import com.boha.geo.monitor.data.Position;
 import lombok.Data;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
 @Document("appErrors")
 public class AppError {
+    private String  _partitionKey;
+    @Id
+    private String  _id;
+
     private String errorMessage;
     private String model;
     private String created;

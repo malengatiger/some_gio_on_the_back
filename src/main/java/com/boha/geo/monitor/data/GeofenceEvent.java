@@ -11,10 +11,13 @@ public class GeofenceEvent {
     @Id
     private String _id;
 
-    private String status, geofenceEventId,
-            date, projectPositionId,
-            projectId,
-            projectName, organizationId;
+    private String status;
+    private String geofenceEventId;
+    private String date;
+    private String projectPositionId;
+    private String projectId;
+    private String projectName;
+    private String organizationId;
     private User user;
     private Position position;
     private String translatedMessage;

@@ -1,11 +1,15 @@
 package com.boha.geo.monitor.data;
 
 import lombok.Data;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
 @Document("paymentRequests")
 public class PaymentRequest {
+    private String  _partitionKey;
+    @Id
+    private String  _id;
     Amount amount;
     String payerReference;
     String beneficiaryReference;

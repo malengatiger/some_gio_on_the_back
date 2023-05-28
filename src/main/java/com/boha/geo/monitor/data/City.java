@@ -2,6 +2,7 @@ package com.boha.geo.monitor.data;
 
 import com.boha.geo.models.CityLocation;
 import lombok.Data;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
@@ -9,6 +10,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class City implements Comparable<City> {
 
     private String  _partitionKey;
+    @Id
+    private String  _id;
     private String  name;
     private String  cityId;
     private String country;

@@ -312,8 +312,7 @@ public class MongoGenerator {
             p0.setOrganizationName(organization.getName());
             p0.setOrganizationId(organization.getOrganizationId());
             p0.setMonitorMaxDistanceInMetres(500);
-            List<City> list = listService.findCitiesByLocation(loc.latitude, loc.longitude, 5);
-            p0.setNearestCities(list);
+            
             projectRepository.insert(p0);
 
             ProjectPosition pPos = new ProjectPosition();

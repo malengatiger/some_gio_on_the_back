@@ -2,12 +2,15 @@ package com.boha.geo.monitor.data;
 
 import com.boha.geo.models.GioMediaInterface;
 import lombok.Data;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
 @Document(collection = "photos")
 public class Photo implements GioMediaInterface {
-    private String _partitionKey;
+    private String  _partitionKey;
+    @Id
+    private String  _id;
     private String projectId;
     private String projectPositionId;
     private String projectPolygonId;
@@ -33,5 +36,25 @@ public class Photo implements GioMediaInterface {
     @Override
     public String getGeoId() {
         return photoId;
+    }
+
+    @Override
+    public String getThumbnailUrl() {
+        return thumbnailUrl;
+    }
+
+    @Override
+    public int getHeight() {
+        return height;
+    }
+
+    @Override
+    public int getWidth() {
+        return width;
+    }
+
+    @Override
+    public int getLandscape() {
+        return landscape;
     }
 }

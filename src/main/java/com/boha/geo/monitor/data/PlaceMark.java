@@ -4,11 +4,16 @@ import lombok.Data;
 
 @Data
 public class PlaceMark {
-    String name, street,
-            isoCountryCode, country,
-            postalCode, administrativeArea,
-            locality, subLocality,
-            subThoroughfare, thoroughfare;
+    String name;
+    String street;
+    String isoCountryCode;
+    String country;
+    String postalCode;
+    String administrativeArea;
+    String locality;
+    String subLocality;
+    String subThoroughfare;
+    String thoroughfare;
 
 
 }

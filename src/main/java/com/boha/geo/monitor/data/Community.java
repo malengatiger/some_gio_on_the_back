@@ -8,10 +8,9 @@ import java.util.List;
 @Data
 @Document(collection = "communities")
 public class Community {
-    /*
-
-     */
-    private String _partitionKey;
+    private String  _partitionKey;
+    @Id
+    private String  _id;
     private String name;
     private String communityId;
     private String countryId;

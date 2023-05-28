@@ -9,10 +9,9 @@ import java.util.List;
 @Document(collection = "questions")
 
 public class Question {
-    /*
-
-     */
-    private String _partitionKey;
+    private String  _partitionKey;
+    @Id
+    private String  _id;
 
     private String text;
     private List<Answer> answers;

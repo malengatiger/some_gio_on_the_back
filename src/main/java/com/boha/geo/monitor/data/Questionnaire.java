@@ -9,7 +9,9 @@ import java.util.List;
 @Document(collection = "questionnaires")
 public class Questionnaire {
 
-    private String _partitionKey;
+    private String  _partitionKey;
+    @Id
+    private String  _id;
     private String organizationId;
     private String created;
     private String questionnaireId;

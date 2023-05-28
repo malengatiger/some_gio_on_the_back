@@ -1,13 +1,16 @@
 package com.boha.geo.monitor.data;
 
 import lombok.Data;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
 @Document("activities")
 public class ActivityModel {
 
-        String _id;
+        private String  _partitionKey;
+        @Id
+        private String  _id;
         String activityModelId;
         ActivityType activityType;
         String date;

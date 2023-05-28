@@ -25,7 +25,5 @@ public class MonitorReport {
     private String  created;
     private Position  position;
 
-    public MonitorReport() {
-    }
 
 }

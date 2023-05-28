@@ -721,36 +721,11 @@ public class ListService {
         return pc;
     }
 
-    public UserCount getCountsByUser(String userId) {
+    public UserCounts getCountsByUser(String userId) {
 
-        if (photoRepository == null) {
-            val pc = new UserCount();
-            pc.setVideos(0);
-            pc.setPhotos(0);
-            pc.setDate(DateTime.now().toDateTimeISO().toString());
-            return pc;
-        }
-        List<Photo> photos = photoRepository.findByUserId(userId);
-        List<Video> videos = videoRepository.findByUserId(userId);
 
-        HashMap<String, String> map = new HashMap<>();
-        for (Photo photo : photos) {
-            map.put(photo.getProjectId(), photo.getProjectId());
-        }
-        for (Video video : videos) {
-            map.put(video.getProjectId(), video.getProjectId());
-        }
 
-        User user = userRepository.findByUserId(userId);
-        val pc = new UserCount();
-        if (user != null) {
-            pc.setUser(user);
-        }
-        pc.setVideos(videos.size());
-        pc.setPhotos(photos.size());
-        pc.setDate(DateTime.now().toDateTimeISO().toString());
-
-        return pc;
+        return null;
     }
 
     public int countVideosByProject(String projectId) {
