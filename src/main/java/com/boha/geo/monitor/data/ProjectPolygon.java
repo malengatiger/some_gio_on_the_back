@@ -16,7 +16,8 @@ public class ProjectPolygon {
     private String projectPolygonId;
     private String organizationId;
     private List<Position> positions;
-    private String projectName, name;
+    private String projectName;
+    private String name;
     private String created;
     private List<City> nearestCities;
     private String userId;

@@ -75,7 +75,7 @@ public class JsonGen {
 
         List<Country> countryList = mongoTemplate.findAll(Country.class);
         String json10 = G.toJson(countryList);
-        createFile(dirPath, json10,"countries.json");
+        createFile(dirPath, json10, "countries_old.json");
 
         List<Organization> organizations = mongoTemplate.findAll(Organization.class);
         String json11 = G.toJson(organizations);

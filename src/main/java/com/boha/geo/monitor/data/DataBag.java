@@ -18,6 +18,7 @@ public class DataBag {
     private List<User> users;
     private List<SettingsModel> settings;
     private List<ActivityModel> activityModels;
+    private List<GeofenceEvent> geofenceEvents;
 
     private String date;
 

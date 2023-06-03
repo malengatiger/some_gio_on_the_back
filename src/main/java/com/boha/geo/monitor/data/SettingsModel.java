@@ -27,4 +27,5 @@ public class SettingsModel {
     private String locale;
     private String translatedMessage;
     private String translatedTitle;
+    private int refreshRateInMinutes;
 }

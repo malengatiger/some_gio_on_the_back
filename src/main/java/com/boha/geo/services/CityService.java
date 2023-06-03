@@ -45,7 +45,7 @@ public class CityService {
         MongoDatabase mongoDb = mongoClient.getDatabase("geo");
         MongoCollection<Document> cityCollection = mongoDb.getCollection("cities");
         Point myPoint = new Point(new Position(longitude, latitude));
-        Bson query = near("cityLocation", myPoint,
+        Bson query = near("position", myPoint,
                 maxDistanceInMetres, minDistanceInMetres);
         final List<City> cities = new ArrayList<>();
 

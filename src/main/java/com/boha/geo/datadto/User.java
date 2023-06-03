@@ -1,0 +1,34 @@
+package com.boha.geo.datadto;
+
+import com.boha.geo.monitor.data.Position;
+import lombok.Data;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+@Data
+@Document(collection = "users")
+public class User {
+    String _partitionKey;
+    @Id
+    String id;
+    String name;
+    String email;
+    String cellphone;
+    String userId;
+    String countryId;
+    String organizationId;
+    String organizationName;
+    String created;
+    String fcmRegistration;
+    String userType;
+    String gender;
+    String password;
+    Position position;
+    int active = 0;
+    String updated;
+    String imageUrl;
+    String thumbnailUrl;
+    private String translatedMessage;
+    private String translatedTitle;
+
+
+}

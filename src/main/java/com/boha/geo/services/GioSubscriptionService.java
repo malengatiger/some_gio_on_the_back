@@ -54,8 +54,8 @@ public class GioSubscriptionService {
     }
 
     public List<Pricing> generateTestPricing() {
-        List<Country> countries = listService.getCountries();
-        for (Country country : countries) {
+        List<com.boha.geo.monitor.data.mcountry.Country> countries = listService.getCountries();
+        for (com.boha.geo.monitor.data.mcountry.Country country : countries) {
             switch (country.getName()) {
                 case "South Africa":
                     writePricing(country, 100.00, 899);
@@ -80,7 +80,7 @@ public class GioSubscriptionService {
         return pricingRepository.findAll();
     }
 
-    private Pricing writePricing(Country country, double monthly, double annual) {
+    private Pricing writePricing(com.boha.geo.monitor.data.mcountry.Country country, double monthly, double annual) {
         Pricing p = new Pricing();
         p.setCountryId(country.getCountryId());
         p.setAnnualPrice(annual);

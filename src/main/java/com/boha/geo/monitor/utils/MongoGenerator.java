@@ -78,10 +78,8 @@ public class MongoGenerator {
         LOGGER.info(E.DICE + E.DICE +E.DICE
                 + " -------- Generation starting .... ");
         try {
-            List<Country> countries = countryRepository.findAll();
-            if (countries.isEmpty()) {
-                addCountries();
-            }
+            List<com.boha.geo.monitor.data.mcountry.Country> countries = countryRepository.findAll();
+
 
             LOGGER.info(E.DICE + E.DICE + E.DICE
                     + " -------- Delete users, generate "+numberOfOrgs+" organizations and communities ... ");
@@ -103,43 +101,6 @@ public class MongoGenerator {
                 + E.RED_APPLE);
     }
 
-    private void addCountries() {
-        List<Country> countries = new ArrayList<>();
-
-        List<Double> cords = new ArrayList<>();
-        cords.add(longitudeZA);
-        cords.add(latitudeZA);
-
-        Country c1 = new Country();
-        c1.setName("South Africa");
-        c1.setPosition(new Position("Point", cords));
-        c1.setCountryCode("ZA");
-        c1.setCountryId(UUID.randomUUID().toString());
-
-        List<Double> cords2 = new ArrayList<>();
-        cords2.add(longitudeZIM);
-        cords2.add(latitudeZIM);
-
-        Country c2 = new Country();
-        c2.setName("Zimbabwe");
-        c2.setPosition(new Position("Point", cords2));
-        c2.setCountryCode("ZIM");
-        c2.setCountryId(UUID.randomUUID().toString());
-
-        Country southAfrica = countryRepository.insert(c1);
-        Country zimbabwe = countryRepository.insert(c2);
-
-        LOGGER.info(E.DICE + E.DICE + E.DICE
-                + " -------- countries added .... ");
-
-        countries.add(southAfrica);
-        countries.add(zimbabwe);
-
-        for (Country country : countries) {
-            LOGGER.info(E.DICE + E.DICE + " -------- Country: "
-                    + country.getName() + " " + E.RED_APPLE);
-        }
-    }
 
     private final ListService listService;
 
@@ -205,10 +166,10 @@ public class MongoGenerator {
         setCommunityNames();
         setProjectNames();
 
-        List<Country> countries = countryRepository.findAll();
+        List<com.boha.geo.monitor.data.mcountry.Country> countries = countryRepository.findAll();
         List<Organization> organizations = new ArrayList<>();
         //Generate orgs for South Africa
-        Country country = countries.get(0);
+        com.boha.geo.monitor.data.mcountry.Country country = countries.get(0);
         LOGGER.info(E.RAIN_DROPS.concat(E.RAIN_DROPS).concat("generateOrganizations: "
                 .concat(country.getName()).concat(" ")
                 .concat(E.FLOWER_YELLOW)));
@@ -236,7 +197,7 @@ public class MongoGenerator {
 
         LOGGER.info(E.LEAF + E.LEAF + "Organizations generated: " + organizations.size());
 
-        generateProjects();
+//        generateProjects();
         generateUsers(true);
         generateFieldMonitorSchedules();
     }
@@ -289,58 +250,6 @@ public class MongoGenerator {
 
     }
 
-    private void generateProjects() {
-        setLocations();
-        List<Organization> organizations = organizationRepository.findAll();
-        LOGGER.info(E.RAIN_DROPS.concat(E.RAIN_DROPS + E.RAIN_DROPS.concat(" Generating projects ...")));
-
-        for (ProjectLocation loc : projectLocations) {
-            //assign this project location to a random organization
-            int index = random.nextInt(organizations.size() - 1);
-            Organization organization = organizations.get(index);
-            List<Double> coordinates = new ArrayList<>();
-            coordinates.add(loc.longitude);
-            coordinates.add(loc.latitude);
-
-            Position pos = new Position("Point", coordinates);
-
-            Project p0 = new Project();
-            p0.setProjectId(UUID.randomUUID().toString());
-            p0.setName(loc.name);
-            p0.setCreated(DateTime.now().toDateTimeISO().toString());
-            p0.setDescription(testProjectDesc);
-            p0.setOrganizationName(organization.getName());
-            p0.setOrganizationId(organization.getOrganizationId());
-            p0.setMonitorMaxDistanceInMetres(500);
-            
-            projectRepository.insert(p0);
-
-            ProjectPosition pPos = new ProjectPosition();
-            pPos.setProjectId(p0.getProjectId());
-            pPos.setProjectName(p0.getName());
-            pPos.setCaption("Project Position Caption");
-            pPos.setOrganizationId(organization.getOrganizationId());
-            pPos.setProjectPositionId(UUID.randomUUID().toString());
-            
-            pPos.setPosition(pos);
-
-            List<City> list1 = listService.findCitiesByLocation(loc.latitude, loc.longitude, 5);
-            pPos.setNearestCities(list1);
-            
-            projectPositionRepository.insert(pPos);
-
-            LOGGER.info(xx +
-                    "Project added, project: \uD83C\uDF4E " + p0.getName() + "\t \uD83C\uDF4E " + p0.getOrganizationName());
-        }
-
-        LOGGER.info(xx+" ORGANIZATIONS on database ....");
-        for (Organization organization : organizations) {
-            LOGGER.info(xx+
-                    " Organization: " + organization.getName());
-        }
-
-
-    }
 
     private String getRandomCellphone() {
 
@@ -429,9 +338,9 @@ public class MongoGenerator {
 
     private void generateCommunities() throws Exception {
 
-        List<Country> countries = countryRepository.findAll();
-        Country country = null;
-        for (Country country1 : countries) {
+        List<com.boha.geo.monitor.data.mcountry.Country> countries = countryRepository.findAll();
+        com.boha.geo.monitor.data.mcountry.Country country = null;
+        for (com.boha.geo.monitor.data.mcountry.Country country1 : countries) {
             if (country1.getName().contains("South Africa")) {
                 country = country1;
             }

@@ -10,6 +10,7 @@ public class Pricing {
     private String  _partitionKey;
     @Id
     private String  _id;
+    private String  pricingId;
     private String countryId;
     private String countryName;
     private String date;

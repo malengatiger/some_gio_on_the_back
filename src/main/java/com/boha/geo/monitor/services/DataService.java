@@ -1,11 +1,11 @@
 package com.boha.geo.monitor.services;
 
 
-import com.boha.geo.monitor.data.AppError;
 import com.boha.geo.models.GioMediaInterface;
 import com.boha.geo.monitor.data.*;
 import com.boha.geo.repos.*;
 import com.boha.geo.services.MailService;
+import com.boha.geo.services.MongoService;
 import com.boha.geo.util.E;
 import com.google.api.core.ApiFuture;
 import com.google.api.gax.core.CredentialsProvider;
@@ -19,14 +19,15 @@ import com.google.firebase.auth.UserRecord;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mongodb.client.result.UpdateResult;
-import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
+import org.joda.time.Duration;
 import org.joda.time.Hours;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
+import org.springframework.data.geo.*;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -36,13 +37,14 @@ import org.springframework.stereotype.Service;
 import java.io.ByteArrayInputStream;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
 /**
  * Service that adds data to the MongoDB database via repositories
  */
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
 
 @Service
 public class DataService {
@@ -52,6 +54,7 @@ public class DataService {
     private static final String databaseUrl = "https://monitor-2021.firebaseio.com";
     final Environment env;
     final AppErrorRepository appErrorRepository;
+    final MongoService mongoService;
 
     final GeofenceEventRepository geofenceEventRepository;
 
@@ -85,14 +88,70 @@ public class DataService {
     final FieldMonitorScheduleRepository fieldMonitorScheduleRepository;
 
     final ProjectSummaryRepository projectSummaryRepository;
+    final StateRepository stateRepository;
     final PaymentRequestRepo paymentRequestRepo;
     private boolean isInitialized = false;
     private final MailService mailService;
 
 
-
-
     private static final String xx = E.COFFEE + E.COFFEE + E.COFFEE;
+
+    public DataService(Environment env, AppErrorRepository appErrorRepository,
+                       MongoService mongoService,
+                       GeofenceEventRepository geofenceEventRepository,
+                       SettingsModelRepository settingsModelRepository,
+                       RatingRepository ratingRepository,
+                       MongoTemplate mongoTemplate,
+                       AudioRepository audioRepository,
+                       ProjectRepository projectRepository,
+                       LocationResponseRepository locationResponseRepository,
+                       LocationRequestRepository locationRequestRepository,
+                       ProjectPolygonRepository projectPolygonRepository,
+                       CityRepository cityRepository, PhotoRepository photoRepository,
+                       ActivityModelRepository activityModelRepository,
+                       ProjectAssignmentRepository projectAssignmentRepository,
+                       VideoRepository videoRepository,
+                       UserRepository userRepository,
+                       CommunityRepository communityRepository,
+                       ConditionRepository conditionRepository,
+                       CountryRepository countryRepository,
+                       OrganizationRepository organizationRepository,
+                       ProjectPositionRepository projectPositionRepository,
+                       OrgMessageRepository orgMessageRepository,
+                       MessageService messageService,
+                       FieldMonitorScheduleRepository fieldMonitorScheduleRepository,
+                       ProjectSummaryRepository projectSummaryRepository, StateRepository stateRepository, PaymentRequestRepo paymentRequestRepo, MailService mailService) {
+        this.env = env;
+        this.appErrorRepository = appErrorRepository;
+        this.mongoService = mongoService;
+        this.geofenceEventRepository = geofenceEventRepository;
+        this.settingsModelRepository = settingsModelRepository;
+        this.ratingRepository = ratingRepository;
+        this.mongoTemplate = mongoTemplate;
+        this.audioRepository = audioRepository;
+        this.projectRepository = projectRepository;
+        this.locationResponseRepository = locationResponseRepository;
+        this.locationRequestRepository = locationRequestRepository;
+        this.projectPolygonRepository = projectPolygonRepository;
+        this.cityRepository = cityRepository;
+        this.photoRepository = photoRepository;
+        this.activityModelRepository = activityModelRepository;
+        this.projectAssignmentRepository = projectAssignmentRepository;
+        this.videoRepository = videoRepository;
+        this.userRepository = userRepository;
+        this.communityRepository = communityRepository;
+        this.conditionRepository = conditionRepository;
+        this.countryRepository = countryRepository;
+        this.organizationRepository = organizationRepository;
+        this.projectPositionRepository = projectPositionRepository;
+        this.orgMessageRepository = orgMessageRepository;
+        this.messageService = messageService;
+        this.fieldMonitorScheduleRepository = fieldMonitorScheduleRepository;
+        this.projectSummaryRepository = projectSummaryRepository;
+        this.stateRepository = stateRepository;
+        this.paymentRequestRepo = paymentRequestRepo;
+        this.mailService = mailService;
+    }
 
     public void initializeFirebase() throws Exception {
         String fbConfig = env.getProperty("FIREBASE_CONFIG");
@@ -404,7 +463,7 @@ public class DataService {
     public User addUser(User user) throws Exception {
 
         User mUser = userRepository.insert(user);
-         messageService.sendMessage(user);
+        messageService.sendMessage(user);
 
         ActivityModel am = new ActivityModel();
         am.setActivityType(ActivityType.userAddedOrModified);
@@ -426,7 +485,7 @@ public class DataService {
     }
 
     public int addPaymentRequest(PaymentRequest paymentRequest) {
-         paymentRequestRepo.insert(paymentRequest);
+        paymentRequestRepo.insert(paymentRequest);
         return 0;
     }
 
@@ -439,8 +498,8 @@ public class DataService {
     }
 
     public int addAppError(AppError appError) {
-         appErrorRepository.insert(appError);
-         return 0;
+        appErrorRepository.insert(appError);
+        return 0;
     }
 
     public int addPhoto(Photo photo) throws Exception {
@@ -449,7 +508,7 @@ public class DataService {
         }
         photoRepository.insert(photo);
         messageService.sendMessage(photo);
-        ActivityModel am2 = buildActivityModel(photo,ActivityType.photoAdded);
+        ActivityModel am2 = buildActivityModel(photo, ActivityType.photoAdded);
         addActivityModel(am2);
         return 0;
     }
@@ -503,7 +562,7 @@ public class DataService {
     public int addVideo(Video video) throws Exception {
         videoRepository.insert(video);
 
-        ActivityModel am2 = buildActivityModel(video,ActivityType.videoAdded);
+        ActivityModel am2 = buildActivityModel(video, ActivityType.videoAdded);
         addActivityModel(am2);
         messageService.sendMessage(video);
         return 0;
@@ -512,7 +571,7 @@ public class DataService {
     public int addAudio(Audio audio) throws Exception {
 
         audioRepository.insert(audio);
-        ActivityModel am2 = buildActivityModel(audio,ActivityType.audioAdded);
+        ActivityModel am2 = buildActivityModel(audio, ActivityType.audioAdded);
         addActivityModel(am2);
         messageService.sendMessage(audio);
         return 0;
@@ -520,7 +579,7 @@ public class DataService {
 
     public int addCondition(Condition condition) throws Exception {
         conditionRepository.insert(condition);
-         messageService.sendMessage(condition);
+        messageService.sendMessage(condition);
         return 0;
     }
 
@@ -556,9 +615,104 @@ public class DataService {
         return 0;
     }
 
+    public List<City> findCitiesByLocation(double latitude, double longitude, double radiusInKM) {
+        Point point = new Point(longitude, latitude);
+        Distance distance = new Distance(radiusInKM, Metrics.KILOMETERS);
+        GeoResults<City> cities = cityRepository.findByPositionNear(point, distance);
+
+        List<City> mList = new ArrayList<>();
+        if (cities == null) {
+            return mList;
+        }
+
+        for (GeoResult<City> city : cities) {
+            mList.add(city.getContent());
+        }
+        LOGGER.info(E.BLUE_DOT + " findCitiesByLocation found: " + mList.size() + " cities");
+
+        return mList;
+    }
+
+    public String fixNearest(String countryId) throws Exception {
+
+        DateTime start = DateTime.now();
+
+        List<City> cities = cityRepository.findByCountryId(countryId);
+        LOGGER.info(E.BLUE_DOT + " cities loaded: " + cities.size() + " ... get positions ...");
+
+        List<ProjectPosition> projectPositions = projectPositionRepository.findAll();
+        LOGGER.info(E.BLUE_DOT + " projectPositions listed: " + projectPositions.size());
+
+        try {
+            for (ProjectPosition pp : projectPositions) {
+                pp.setNearestCities(new ArrayList<>());
+                List<City> list = findCitiesByLocation(pp.getPosition()
+                        .getCoordinates().get(1), pp.getPosition().getCoordinates().get(0), 5);
+                for (City city : list) {
+                    pp.getNearestCities().add(city);
+                }
+                //update pp
+                projectPositionRepository.save(pp);
+                LOGGER.info(E.BLUE_DOT + " projectPosition updated ... " + pp.getProjectName()
+                        + " with \uD83D\uDECE \uD83D\uDECE " + pp.getNearestCities().size() + " nearest cities");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        LOGGER.info(E.BLUE_DOT + " starting to update projectPolygons ... ");
+
+        List<ProjectPolygon> projectPolygons = projectPolygonRepository.findAll();
+        LOGGER.info(E.BLUE_DOT + " projectPolygons listed: " + projectPolygons.size());
+
+        try {
+            for (ProjectPolygon pp : projectPolygons) {
+                pp.setNearestCities(new ArrayList<>());
+                List<City> unfiltered = new ArrayList<>();
+                List<Position> positions = new ArrayList<>();
+                LOGGER.info(E.BROCCOLI + E.BROCCOLI + " projectPolygon existing positions: " + pp.getPositions().size());
+
+                for (Position p : pp.getPositions()) {
+                    p.setLatitude(p.getCoordinates().get(1));
+                    p.setLongitude(p.getCoordinates().get(0));
+                    positions.add(p);
+                    List<City> list = findCitiesByLocation(p
+                            .getCoordinates().get(1), p.getCoordinates().get(0), 5);
+                    unfiltered.addAll(list);
+                }
+                pp.setPositions(positions);
+                LOGGER.info(E.BROCCOLI + E.BROCCOLI + " unfiltered nearest cities for polygon: " + unfiltered.size());
+                HashMap<String, City> map = new HashMap<>();
+                for (City city : unfiltered) {
+                    if (!map.containsKey(city.getCityId())) {
+                        map.put(city.getCityId(), city);
+                    }
+                }
+                List<City> filtered = map.values().stream().toList();
+                LOGGER.info(E.BROCCOLI + E.BROCCOLI + " filtered cities: " + filtered.size() + " : organizationId: " + pp.getOrganizationId());
+                //update pp
+                pp.setNearestCities(filtered);
+                projectPolygonRepository.save(pp);
+                LOGGER.info(E.BLUE_DOT + " projectPolygon updated ... " + pp.getProjectName()
+                        + " with \uD83D\uDECE \uD83D\uDECE " + pp.getNearestCities().size() + " nearest cities");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        DateTime end = DateTime.now();
+        Duration duration = new Duration(start, end);
+        LOGGER.info(E.BLUE_DOT + E.BLUE_DOT + E.BLUE_DOT + E.BLUE_DOT
+                + " fix job complete! ... " + duration.getStandardSeconds() + " seconds or "
+                + duration.getStandardMinutes() + " minutes elapsed " + E.BLUE_DOT);
+
+        return "Nearest cities fixed up. Yo!";
+    }
+
     public int addProjectPosition(ProjectPosition projectPosition) throws Exception {
 
-        ProjectPosition m = projectPositionRepository.insert(projectPosition);
+        List<City> list = findCitiesByLocation(projectPosition.getPosition()
+                .getCoordinates().get(1), projectPosition.getPosition().getCoordinates().get(0), 10);
+        projectPosition.setNearestCities(list);
+        ProjectPosition m = projectPositionRepository.save(projectPosition);
 
         messageService.sendMessage(m);
         User user = userRepository.findByUserId(projectPosition.getUserId());
@@ -585,8 +739,25 @@ public class DataService {
     }
 
     public int addProjectPolygon(ProjectPolygon projectPolygon) throws Exception {
+        List<City> unfiltered = new ArrayList<>();
+        for (Position p : projectPolygon.getPositions()) {
 
-        ProjectPolygon m = projectPolygonRepository.insert(projectPolygon);
+            List<City> list = findCitiesByLocation(p
+                    .getCoordinates().get(1), p.getCoordinates().get(0), 10);
+            unfiltered.addAll(list);
+        }
+        LOGGER.info(E.BROCCOLI + " unfiltered nearest cities: " + unfiltered.size());
+        HashMap<String, City> map = new HashMap<>();
+        for (City city : unfiltered) {
+            if (!map.containsKey(city.getCityId())) {
+                map.put(city.getCityId(), city);
+            }
+        }
+        List<City> filtered = map.values().stream().toList();
+        LOGGER.info(E.BROCCOLI + " filtered cities: " + filtered.size());
+
+        projectPolygon.setNearestCities(filtered);
+        ProjectPolygon m = projectPolygonRepository.save(projectPolygon);
 
         if (m != null) {
             m.setNearestCities(null);
@@ -734,8 +905,8 @@ public class DataService {
         return cm;
     }
 
-    public int addCountry(Country country) throws Exception {
-        countryRepository.insert(country);
+    public int addCountry(com.boha.geo.monitor.data.mcountry.Country country) throws Exception {
+        countryRepository.save(country);
         return 0;
     }
 
@@ -768,7 +939,7 @@ public class DataService {
         Query query2 = Query.query(Criteria.where("name").is("John Q. Testerman"));
         mongoTemplate.findAndRemove(query2, User.class);
 
-        LOGGER.info(E.BUTTERFLY+E.BUTTERFLY+ " should have deleted test organization");
+        LOGGER.info(E.BUTTERFLY + E.BUTTERFLY + " should have deleted test organization");
     }
 
     public User createUser(User user) throws Exception {

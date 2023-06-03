@@ -148,10 +148,10 @@ public class TheDevController {
     @GetMapping("/addCities")
     private ResponseEntity<Object> addCities() {
         try {
-            List<City> cities = mongoService.addCitiesToDB();
+            long cities = mongoService.addCitiesToDB();
             logger.info(E.BLUE_HEART + E.BLUE_HEART + E.CHECK +
-                    " MainController Returning " + cities.size() + " cities");
-            return ResponseEntity.ok(cities);
+                    " addCities Returning " + cities + " cities");
+            return ResponseEntity.ok("added " + cities + " cities");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e);
         }

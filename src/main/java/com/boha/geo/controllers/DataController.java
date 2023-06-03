@@ -7,10 +7,7 @@ import com.boha.geo.monitor.services.MessageService;
 import com.boha.geo.monitor.services.MongoDataService;
 import com.boha.geo.monitor.services.RegistrationService;
 import com.boha.geo.repos.PaymentRequestRepo;
-import com.boha.geo.services.CloudStorageUploaderService;
-import com.boha.geo.services.GioSubscriptionService;
-import com.boha.geo.services.TextTranslationService;
-import com.boha.geo.services.UserBatchService;
+import com.boha.geo.services.*;
 import com.boha.geo.util.E;
 import com.boha.geo.util.JsonGen;
 import com.google.common.io.Files;
@@ -46,6 +43,7 @@ public class DataController {
     private final MessageService messageService;
     private final RegistrationService registrationService;
     private final GioSubscriptionService gioSubscriptionService;
+    final MongoService mongoService;
 
 
     @GetMapping("/ping")
@@ -231,7 +229,7 @@ public class DataController {
     }
 
     @PostMapping("/addCountry")
-    public ResponseEntity<Object> addCountry(@RequestBody Country country) throws Exception {
+    public ResponseEntity<Object> addCountry(@RequestBody com.boha.geo.monitor.data.mcountry.Country country) throws Exception {
 
         try {
             dataService.addCountry(country);
@@ -964,6 +962,33 @@ public class DataController {
         }
         LOGGER.info("\uD83C\uDF3C\uD83C\uDF3C Users created from batch file: " + users.size());
         return ResponseEntity.ok(users);
+    }
+
+    @GetMapping("/fixNearest")
+    public ResponseEntity<?> fixNearest(@RequestParam String countryId) throws Exception {
+
+        try {
+            return ResponseEntity.ok(dataService.fixNearest(countryId));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(
+                    new CustomErrorResponse(400,
+                            "fixNearest failed: " + e.getMessage(),
+                            new DateTime().toDateTimeISO().toString()));
+        }
+
+    }
+    @GetMapping("/addCountriesStatesCitiesToDB")
+    public ResponseEntity<?> addCountriesStatesCitiesToDB() throws Exception {
+
+        try {
+            return ResponseEntity.ok(mongoService.addCountriesStatesCitiesToDB());
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(
+                    new CustomErrorResponse(400,
+                            "addCountriesStatesCitiesToDB failed: " + e.getMessage(),
+                            new DateTime().toDateTimeISO().toString()));
+        }
+
     }
 
     static class UserDeleteResponse {

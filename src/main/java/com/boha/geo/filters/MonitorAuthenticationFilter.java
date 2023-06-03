@@ -132,8 +132,10 @@ public class MonitorAuthenticationFilter extends OncePerRequestFilter {
             }
 
         } catch (Exception e) {
-            String msg = "FirebaseAuthException happened: \uD83C\uDF4E " + e.getMessage();
-            LOGGER.info(E.RED_DOT + E.RED_DOT + E.RED_DOT + E.RED_DOT + E.RED_DOT + E.RED_DOT + E.RED_DOT + " " + msg);
+            String msg = "an Exception happened: \uD83C\uDF4E " + e.getMessage();
+            LOGGER.info(E.RED_DOT + E.RED_DOT + E.RED_DOT + E.RED_DOT + E.RED_DOT + E.RED_DOT + E.RED_DOT + " " + msg
+                    + "\n failed url: " + httpServletRequest.getRequestURL().toString()+ E.RED_DOT);
+            e.printStackTrace();
             sendError(httpServletResponse, e.getMessage());
         }
 

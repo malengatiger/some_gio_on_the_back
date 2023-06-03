@@ -8,7 +8,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class User {
     String _partitionKey;
     @Id
-    String _id;
+    String id;
     String name;
     String email;
     String cellphone;

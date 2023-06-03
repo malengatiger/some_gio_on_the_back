@@ -4,7 +4,6 @@ import com.boha.geo.monitor.data.City;
 import com.boha.geo.repos.CityRepository;
 import com.boha.geo.util.E;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.geo.Distance;
 import org.springframework.data.geo.GeoResult;
 import org.springframework.data.geo.GeoResults;
@@ -28,7 +27,7 @@ public class MongoDataService {
     }
 
     public List<City> getCitiesByLocation(Point location, Distance distance) {
-        GeoResults<City> cities = cityRepository.findByCityLocationNear(location,distance);
+        GeoResults<City> cities = cityRepository.findByPositionNear(location,distance);
         LOGGER.info(E.DICE + "Found " + cities.getContent().size()
                 + " cities by location; radiusInKM = " + distance.getValue());
         List<City> mList = new ArrayList<>();

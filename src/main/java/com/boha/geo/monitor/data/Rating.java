@@ -9,7 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Rating {
     private String _partitionKey;
     @Id
-    private String _id;
+    private String id;
     private String ratingId;
     private String projectId;
     private String projectName;

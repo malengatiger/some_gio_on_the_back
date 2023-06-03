@@ -8,12 +8,8 @@ import java.util.List;
 public class Position {
     String type;
     List<Double> coordinates;
+    double latitude;
+    double longitude;
 
-    public Position(String type, List<Double> coordinates) {
-        this.type = type;
-        this.coordinates = coordinates;
-    }
 
-    public Position() {
-    }
 }

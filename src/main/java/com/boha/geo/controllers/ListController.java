@@ -160,7 +160,7 @@ public class ListController {
 
     public ResponseEntity<Object> getCountries() throws Exception {
         try {
-            List<Country> countries = listService.getCountries();
+            List<com.boha.geo.monitor.data.mcountry.Country> countries = listService.getCountries();
             return ResponseEntity.ok(countries);
 //            if (bucket.tryConsume(1)) {
 //                return ResponseEntity.ok(countries);
@@ -1200,5 +1200,7 @@ public class ListController {
         }
 
     }
+
+
 
 }

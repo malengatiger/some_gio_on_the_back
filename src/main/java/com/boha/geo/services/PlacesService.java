@@ -89,8 +89,8 @@ public class PlacesService {
                 + city.getName() + ", pageCount: " + pageCount
                 + " of " + MAX_PAGE_COUNT);
 
-        String link = buildLink(city.getCityLocation().getCoordinates().get(1),
-                city.getCityLocation().getCoordinates().get(0), radiusInMetres);
+        String link = buildLink(city.getPosition().getCoordinates().get(1),
+                city.getPosition().getCoordinates().get(0), radiusInMetres);
         if (pageToken != null) {
             link += "&pagetoken=" + pageToken;
             try {

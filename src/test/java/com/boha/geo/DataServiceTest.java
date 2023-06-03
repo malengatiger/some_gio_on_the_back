@@ -5,6 +5,7 @@ import com.boha.geo.monitor.services.DataService;
 import com.boha.geo.monitor.services.MessageService;
 import com.boha.geo.repos.*;
 import com.boha.geo.services.MailService;
+import com.boha.geo.services.MongoService;
 import com.boha.geo.util.E;
 import org.junit.Assert;
 import org.junit.Before;
@@ -93,15 +94,22 @@ public class DataServiceTest {
     @InjectMocks
     private DataService dataService;
 
+    @InjectMocks
+    private PaymentRequestRepo paymentRequestRepo;
+    @InjectMocks
+    private StateRepository stateRepository;
+    @InjectMocks
+    private MongoService mongoService;
+
     @Before
     public void initService() {
-        dataService = new DataService(env, appErrorRepository, geofenceEventRepository, settingsModelRepository,
+        dataService = new DataService(env, appErrorRepository, mongoService, geofenceEventRepository, settingsModelRepository,
                 ratingRepository, mongoTemplate, audioRepository, projectRepository, locationResponseRepository,
                 locationRequestRepository, projectPolygonRepository, cityRepository, photoRepository,
                 activityModelRepository, projectAssignmentRepository, videoRepository, userRepository,
                 communityRepository, conditionRepository, countryRepository, organizationRepository,
                 projectPositionRepository, orgMessageRepository, messageService, fieldMonitorScheduleRepository,
-                projectSummaryRepository, mailService
+                projectSummaryRepository, stateRepository, paymentRequestRepo,mailService
         );
 //        LOGGER.info(E.PEAR + E.PEAR + E.PEAR +"DataServiceTest: dataService initialized");
     }

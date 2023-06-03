@@ -10,11 +10,9 @@ import com.google.gson.GsonBuilder;
 import com.mongodb.client.MongoClient;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.bson.Document;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.data.geo.*;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -331,6 +329,10 @@ public class ListService {
         List<Project> projects = getAllOrganizationProjects(organizationId);
         LOGGER.info("\uD83C\uDF00 projects: " + projects.size());
 
+
+        List<GeofenceEvent> geos = getOrganizationGeofenceEvents(organizationId, startDate, endDate);
+        LOGGER.info("\uD83C\uDF00 geofenceEvents: " + geos.size());
+
         List<Video> videos = getOrganizationVideos(organizationId, startDate, endDate);
         LOGGER.info("\uD83C\uDF00 videos: " + videos.size());
 
@@ -366,6 +368,7 @@ public class ListService {
         bag.setVideos(videos);
         bag.setAudios(audios);
         bag.setUsers(users);
+        bag.setGeofenceEvents(geos);
         bag.setProjectAssignments(assignments);
         bag.setActivityModels(models);
 
@@ -667,7 +670,7 @@ public class ListService {
     public List<City> findCitiesByLocation(double latitude, double longitude, double radiusInKM) {
         Point point = new Point(longitude, latitude);
         Distance distance = new Distance(radiusInKM, Metrics.KILOMETERS);
-        GeoResults<City> cities = cityRepository.findByCityLocationNear(point, distance);
+        GeoResults<City> cities = cityRepository.findByPositionNear(point, distance);
 
         List<City> mList = new ArrayList<>();
         if (cities == null) {
@@ -854,7 +857,7 @@ public class ListService {
 
         Point point = new Point(longitude, latitude);
         Distance distance = new Distance(radiusInKM, Metrics.KILOMETERS);
-        GeoResults<City> cities = cityRepository.findByCityLocationNear(point, distance);
+        GeoResults<City> cities = cityRepository.findByPositionNear(point, distance);
 
         if (cities == null) {
             return new ArrayList<>();
@@ -912,6 +915,14 @@ public class ListService {
         return filteredList;
     }
 
+    public List<GeofenceEvent> getOrganizationGeofenceEvents(String organizationId, String startDate, String endDate) {
+
+        Criteria c = Criteria.where("organizationId").is(organizationId)
+                .and("date").gte(startDate).lte(endDate);
+        Query query = new Query(c);
+        List<GeofenceEvent> mList = mongoTemplate.find(query, GeofenceEvent.class);
+        return mList;
+    }
 
     public List<Photo> getOrganizationPhotos(String organizationId, String startDate, String endDate) {
 
@@ -919,7 +930,6 @@ public class ListService {
                 .and("created").gte(startDate).lte(endDate);
         Query query = new Query(c);
         List<Photo> mList = mongoTemplate.find(query, Photo.class);
-//        List<Photo> xList = photoRepository.findByOrganizationId(organizationId);
 
         return mList;
     }
@@ -1003,9 +1013,9 @@ public class ListService {
     }
 
     //
-    public List<Country> getCountries() {
+    public List<com.boha.geo.monitor.data.mcountry.Country> getCountries() {
 
-        List<Country> mList = countryRepository.findAll();
+        List<com.boha.geo.monitor.data.mcountry.Country> mList = countryRepository.findAll();
 
         return mList;
     }

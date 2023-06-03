@@ -6,7 +6,8 @@ import java.util.List;
 @Data
 public class Section {
     private int  sectionNumber;
-    private String  title, sectionId;
+    private String  title;
+    private String sectionId;
     private String  description;
     private List<Question> questions;
 

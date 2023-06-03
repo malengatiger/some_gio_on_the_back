@@ -10,7 +10,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Video implements GioMediaInterface {
     private String _partitionKey;
     @Id
-    private String _id;
+    private String id;
     private String projectId;
     private String projectPositionId;
     private String projectPolygonId;

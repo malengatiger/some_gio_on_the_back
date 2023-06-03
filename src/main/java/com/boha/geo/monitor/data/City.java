@@ -1,6 +1,5 @@
 package com.boha.geo.monitor.data;
 
-import com.boha.geo.models.CityLocation;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -9,17 +8,20 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "cities")
 public class City implements Comparable<City> {
 
-    private String  _partitionKey;
+    private String _partitionKey;
     @Id
-    private String  _id;
-    private String  name;
-    private String  cityId;
+    private String _id;
+    private String name;
+    private String cityId;
     private String country;
+    private String countryId;
+    private String stateId;
+    private String stateName;
+    private String countryName;
     private String province;
-    private CityLocation cityLocation;
-
-    public City() {
-    }
+    private Position position;
+    private double latitude;
+    private double longitude;
 
 
     @Override

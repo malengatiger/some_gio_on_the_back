@@ -19,10 +19,16 @@ public class ProjectSummary {
     private long projectPositions;
     private long projectPolygons;
     private int calculatedHourly;
-    private int day, hour;
-    private String startDate, endDate, batchId;
+    private int day;
+    private int hour;
+    private String startDate;
+    private String endDate;
+    private String batchId;
 
-    private String date, projectName, organizationId, organizationName;
+    private String date;
+    private String projectName;
+    private String organizationId;
+    private String organizationName;
 
 
 }

@@ -10,13 +10,10 @@ import java.util.List;
 
 public interface CityRepository extends MongoRepository<City, String> {
 
-    /*
-    // No metric: {'geoNear' : 'person', 'near' : [x, y], maxDistance : distance }
-  // Metric: {'geoNear' : 'person', 'near' : [x, y], 'maxDistance' : distance,
-  //          'distanceMultiplier' : metric.multiplier, 'spherical' : true }
-  GeoResults<Person> findByLocationNear(Point location, Distance distance);
-     */
-    GeoResults<City> findByCityLocationNear(Point location, Distance distance);
+    GeoResults<City> findByPositionNear(Point location, Distance distance);
     public City findByName(String name);
+    public List<City> findByCountryId(String countryId);
+
     public List<City> findByProvince(String province);
+
 }

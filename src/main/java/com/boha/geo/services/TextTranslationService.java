@@ -207,9 +207,12 @@ public class TextTranslationService {
     }
 
     private void setStrings() {
+//'Enter the number of minutes for data refresh': enterRateInMinutes
+        hashMap.put("enterRateInMinutes","Enter the number of minutes for data refresh");
+        hashMap.put("refreshRateInMinutes","Refresh Rate In Minutes");
 
-        hashMap.put("upgrade","Upgrade");
-        hashMap.put("upgradeText","Upgrade to $Gio's subscription plans now and unlock the full potential. Gain advanced features, real-time analytics, and seamless integrations. Level up your remote workforce management today! Click to confirm your payment and revolutionize your operations.");
+//        hashMap.put("upgrade","Upgrade");
+//        hashMap.put("upgradeText","Upgrade to $Gio's subscription plans now and unlock the full potential. Gain advanced features, real-time analytics, and seamless integrations. Level up your remote workforce management today! Click to confirm your payment and revolutionize your operations.");
 
 //        hashMap.put("payment","Payment");
 //        hashMap.put("subscriptionPlans","Subscription Plans");
