@@ -2,6 +2,8 @@ bucketName: aubsbucket01
 firstNames: firstNames.json
 mongoSecretsName: mongo
 mongoSecretsVersion: 1
+realmSecretsName: realm
+realmSecretsVersion: 2
 mongoString: mongodb://localhost:27017
 my-app-secret-1: ${sm://application-secret/latest}
 placesAPIKeyName: places_api_key

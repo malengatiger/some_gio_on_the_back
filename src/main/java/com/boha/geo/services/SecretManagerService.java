@@ -35,6 +35,12 @@ public class SecretManagerService {
     @Value("${mongoSecretsVersion}")
     private String mongoSecretsVersion;
 
+    @Value("${realmSecretsName}")
+    private String realmSecretsName;
+
+    @Value("${realmSecretsVersion}")
+    private String realmSecretsVersion;
+
     private final Environment environment;
     private final SecretManagerTemplate secretManagerTemplate;
 
@@ -89,8 +95,11 @@ public class SecretManagerService {
         // the "close" method on the client to safely clean up any remaining background resources.
         LOGGER.info(E.RED_APPLE+E.RED_APPLE+E.RED_APPLE+E.RED_APPLE
                 +" SecretMgr: getMongoString: projectId: " + projectId);
+//        String m =  this.secretManagerTemplate.getSecretString(
+//                "sm://"+mongoSecretsName+"/"+mongoSecretsVersion);
+
         String m =  this.secretManagerTemplate.getSecretString(
-                "sm://"+mongoSecretsName+"/"+mongoSecretsVersion+"");
+                "sm://"+realmSecretsName+"/"+realmSecretsVersion);
 
         LOGGER.info(E.RED_APPLE+E.RED_APPLE+E.RED_APPLE+E.RED_APPLE + m);
         return m;

@@ -1,7 +1,6 @@
 package com.boha.geo.monitor.services;
 
 
-import com.boha.geo.monitor.data.AppError;
 import com.boha.geo.monitor.data.*;
 import com.boha.geo.repos.*;
 import com.boha.geo.util.E;
@@ -32,13 +31,14 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 ;
+
 @RequiredArgsConstructor
 @Service
 public class ListService {
     public static final Logger LOGGER = LoggerFactory.getLogger(ListService.class.getSimpleName());
     private static final String xx = E.COFFEE + E.COFFEE + E.COFFEE;
     private static final Gson G = new GsonBuilder().setPrettyPrinting().create();
-   
+
     private final GeofenceEventRepository geofenceEventRepository;
 
     private final AppErrorRepository appErrorRepository;
@@ -146,6 +146,11 @@ public class ListService {
         return mList;
     }
 
+    public List<City> getCitiesByCountry(String countryId) {
+
+        return cityRepository.findByCountryId(countryId);
+    }
+
     public List<Community> getCommunities() {
 
         List<Community> mList = communityRepository.findAll();
@@ -167,6 +172,7 @@ public class ListService {
 
         return mList;
     }
+
     public Organization getOrganization(String organizationId) throws Exception {
         Query q = new Query();
         q.addCriteria(Criteria.where("organizationId").is(organizationId));
@@ -175,7 +181,7 @@ public class ListService {
         if (!orgs.isEmpty()) {
             return orgs.get(0);
         } else {
-        throw new Exception("Organization not found");
+            throw new Exception("Organization not found");
         }
     }
 
@@ -232,6 +238,12 @@ public class ListService {
 
         Query query = new Query(criteria);
         List<ActivityModel> activities = mongoTemplate.find(query, ActivityModel.class);
+        return activities;
+    }
+    public List<ActivityModel> getOrganizationActivity(String organizationId) {
+
+        List<ActivityModel> activities = activityModelRepository
+                .findByOrganizationId(organizationId);
         return activities;
     }
 
@@ -342,7 +354,7 @@ public class ListService {
         List<Photo> photos = getOrganizationPhotos(organizationId, startDate, endDate);
         LOGGER.info("\uD83C\uDF00 photos: " + photos.size());
 
-        List<ActivityModel> models = getOrganizationActivity(organizationId,activityStreamHours);
+        List<ActivityModel> models = getOrganizationActivity(organizationId, activityStreamHours);
         LOGGER.info("\uD83C\uDF00 activities: " + models.size());
 
 
@@ -374,7 +386,7 @@ public class ListService {
 
         long end = System.currentTimeMillis();
         long ms = (end - start);
-        double elapsed = Double.parseDouble(""+ms) / Double.parseDouble("1000");
+        double elapsed = Double.parseDouble("" + ms) / Double.parseDouble("1000");
         LOGGER.info("\uD83C\uDF00 getOrganizationData: returning bag: .........  elapsed time: " + elapsed + " seconds");
         return bag;
     }
@@ -388,9 +400,9 @@ public class ListService {
         return list;
     }
 
-    static final String mm = "" + E.ALIEN + E.ALIEN  +  E.ALIEN  + " Zip Data: ";
+    static final String mm = "" + E.ALIEN + E.ALIEN + E.ALIEN + " Zip Data: ";
 
-    public DataCounts getOrganizationDataCounts(String organizationId, String startDate, String endDate,int activityStreamHours) throws Exception {
+    public DataCounts getOrganizationDataCounts(String organizationId, String startDate, String endDate, int activityStreamHours) throws Exception {
         long start = System.currentTimeMillis();
 
         DataCounts counts = new DataCounts();
@@ -432,7 +444,7 @@ public class ListService {
 
         long end = System.currentTimeMillis();
         long ms = (end - start);
-        double elapsed = Double.parseDouble(""+ms) / Double.parseDouble("1000");
+        double elapsed = Double.parseDouble("" + ms) / Double.parseDouble("1000");
         String json = G.toJson(counts);
 
         LOGGER.info("\uD83C\uDF00 counts: " + json);
@@ -441,8 +453,8 @@ public class ListService {
         return counts;
     }
 
-    public File getOrganizationDataZippedFile(String organizationId, String startDate, String endDate,int activityStreamHours) throws Exception {
-        LOGGER.info(mm+" getOrganizationDataZippedFile .............................." );
+    public File getOrganizationDataZippedFile(String organizationId, String startDate, String endDate, int activityStreamHours) throws Exception {
+        LOGGER.info(mm + " getOrganizationDataZippedFile ..............................");
         long start = System.currentTimeMillis();
         DecimalFormat decimalFormat = new DecimalFormat("#.##");
         decimalFormat.setGroupingUsed(true);
@@ -451,11 +463,11 @@ public class ListService {
         DataBag bag = getOrganizationData(organizationId, startDate, endDate, activityStreamHours);
         long end = System.currentTimeMillis();
         long ms = (end - start);
-        double elapsed = Double.parseDouble(""+ms) / Double.parseDouble("1000");
-        LOGGER.info(mm + E.RED_DOT+E.RED_DOT+" After get data: " +
+        double elapsed = Double.parseDouble("" + ms) / Double.parseDouble("1000");
+        LOGGER.info(mm + E.RED_DOT + E.RED_DOT + " After get data: " +
                 " elapsed: " + elapsed + " seconds");
         String json = G.toJson(bag);
-        LOGGER.info(mm + E.RED_DOT+E.RED_DOT+" Before zip: " + decimalFormat.format(json.length()) + " bytes in file");
+        LOGGER.info(mm + E.RED_DOT + E.RED_DOT + " Before zip: " + decimalFormat.format(json.length()) + " bytes in file");
         File dir = new File("zipDirectory");
         if (!dir.exists()) {
             dir.mkdir();
@@ -472,9 +484,9 @@ public class ListService {
         out.close();
         end = System.currentTimeMillis();
         ms = (end - start);
-        elapsed = Double.parseDouble(""+ms) / Double.parseDouble("1000");
+        elapsed = Double.parseDouble("" + ms) / Double.parseDouble("1000");
 
-        LOGGER.info(mm + E.RED_DOT+E.RED_DOT+" After zip: "
+        LOGGER.info(mm + E.RED_DOT + E.RED_DOT + " After zip: "
                 + decimalFormat.format(zippedFile.length()) +
                 " bytes, elapsed: " + elapsed + " seconds");
         return zippedFile;
@@ -489,7 +501,7 @@ public class ListService {
         decimalFormat.setGroupingUsed(true);
         decimalFormat.setGroupingSize(3);
 
-        LOGGER.info(mm + E.RED_DOT+E.RED_DOT+ " Before zip: " + decimalFormat.format( json.length()) + " bytes in json");
+        LOGGER.info(mm + E.RED_DOT + E.RED_DOT + " Before zip: " + decimalFormat.format(json.length()) + " bytes in json");
 
         File dir = new File("zipDirectory");
         if (!dir.exists()) {
@@ -508,9 +520,9 @@ public class ListService {
         out.close();
         long end = System.currentTimeMillis();
         long ms = (end - start);
-        double elapsed = Double.parseDouble(""+ms) / Double.parseDouble("1000");
+        double elapsed = Double.parseDouble("" + ms) / Double.parseDouble("1000");
 
-        LOGGER.info(mm + E.RED_DOT+E.RED_DOT+ " After zip: "
+        LOGGER.info(mm + E.RED_DOT + E.RED_DOT + " After zip: "
                 + decimalFormat.format(zippedFile.length()) + " bytes in file, elapsed: "
                 + E.RED_APPLE + " " + elapsed + " seconds");
         return zippedFile;
@@ -522,7 +534,7 @@ public class ListService {
         decimalFormat.setGroupingSize(3);
         DataBag bag = getUserData(userId, startDate, endDate);
         String json = G.toJson(bag);
-        LOGGER.info(mm + E.RED_DOT+E.RED_DOT+ " getUserDataZippedFile: Before zip: " + decimalFormat.format(json.length()) + " bytes");
+        LOGGER.info(mm + E.RED_DOT + E.RED_DOT + " getUserDataZippedFile: Before zip: " + decimalFormat.format(json.length()) + " bytes");
 
         File dir = new File("zipDirectory");
         if (!dir.exists()) {
@@ -539,7 +551,7 @@ public class ListService {
         out.closeEntry();
 
         out.close();
-        LOGGER.info(mm + E.RED_DOT+E.RED_DOT+ " After zipping: " + decimalFormat.format(zippedFile.length()) + " bytes in file");
+        LOGGER.info(mm + E.RED_DOT + E.RED_DOT + " After zipping: " + decimalFormat.format(zippedFile.length()) + " bytes in file");
         return zippedFile;
     }
 
@@ -638,7 +650,7 @@ public class ListService {
         return mList;
     }
 
-   
+
     ProjectPositionRepository projectPositionRepository;
 
     public List<Project> findProjectsByLocation(String organizationId, double latitude, double longitude, double radiusInKM) {
@@ -664,7 +676,7 @@ public class ListService {
             map.put(project.getProjectId(), project);
         }
         fList = map.values().stream().toList();
-       return fList;
+        return fList;
     }
 
     public List<City> findCitiesByLocation(double latitude, double longitude, double radiusInKM) {
@@ -683,7 +695,7 @@ public class ListService {
         return mList;
     }
 
-   
+
     MongoClient mongoClient;
 
     public int countPhotosByProject(String projectId) {
@@ -725,7 +737,6 @@ public class ListService {
     }
 
     public UserCounts getCountsByUser(String userId) {
-
 
 
         return null;
@@ -811,19 +822,20 @@ public class ListService {
             Query query = new Query(c);
             mList = mongoTemplate.find(query, ProjectPosition.class);
 
-        return mList;
+            return mList;
         } catch (Exception e) {
             if (e instanceof DataAccessResourceFailureException) {
                 LOGGER.info("Retrying failed request ,,,");
                 try {
                     Thread.sleep(5000);
                 } catch (InterruptedException ex) {
-                    getOrganizationProjectPositions(organizationId, startDate,endDate);
+                    getOrganizationProjectPositions(organizationId, startDate, endDate);
                 }
             }
         }
         return mList;
     }
+
     public List<ProjectPosition> getOrganizationProjectPositions(String organizationId) {
 
         if (projectPositionRepository == null) {
@@ -842,6 +854,7 @@ public class ListService {
 
         return mList;
     }
+
     public List<ProjectPolygon> getOrganizationProjectPolygons(String organizationId) {
         List<ProjectPolygon> mList = projectPolygonRepository.findByOrganizationId(organizationId);
         return mList;
@@ -850,6 +863,12 @@ public class ListService {
     public List<GeofenceEvent> getGeofenceEventsByProjectPosition(String projectPositionId) {
 
         List<GeofenceEvent> events = geofenceEventRepository.findByProjectPositionId(projectPositionId);
+        return events;
+    }
+
+    public List<GeofenceEvent> getGeofenceEventsByOrganization(String organizationId) {
+
+        List<GeofenceEvent> events = geofenceEventRepository.findByOrganizationId(organizationId);
         return events;
     }
 
@@ -878,11 +897,36 @@ public class ListService {
 
         return mList;
     }
+
     public List<Project> getAllOrganizationProjects(String organizationId) {
 
         return projectRepository.findByOrganizationId(organizationId);
     }
+    public List<Photo> getAllOrganizationPhotos(String organizationId) {
 
+        return photoRepository.findByOrganizationId(organizationId);
+    } public List<Video> getAllOrganizationVideos(String organizationId) {
+
+        return videoRepository.findByOrganizationId(organizationId);
+    }
+    public List<Audio> getAllOrganizationAudios(String organizationId) {
+
+        return audioRepository.findByOrganizationId(organizationId);
+    }
+    public List<User> getAllOrganizationUsers(String organizationId) {
+
+        return userRepository.findByOrganizationId(organizationId);
+    }
+
+    public List<ProjectPosition> getAllOrganizationPositions(String organizationId) {
+
+        return projectPositionRepository.findByOrganizationId(organizationId);
+    }
+
+    public List<ProjectPolygon> getAllOrganizationPolygons(String organizationId) {
+
+        return projectPolygonRepository.findByOrganizationId(organizationId);
+    }
     public List<SettingsModel> getOrganizationSettings(String organizationId) {
 
         List<SettingsModel> mList = settingsModelRepository.findByOrganizationId(organizationId);
@@ -904,6 +948,7 @@ public class ListService {
         }
         return filteredList;
     }
+
     public List<User> getOrganizationUsers(String organizationId) {
         List<User> filteredList = new ArrayList<>();
         List<User> mList = userRepository.findByOrganizationId(organizationId);
@@ -964,6 +1009,7 @@ public class ListService {
         List<User> mList = userRepository.findAll();
         return mList;
     }
+
 
     public User getUserById(String userId) {
 

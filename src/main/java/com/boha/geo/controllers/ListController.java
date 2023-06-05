@@ -80,6 +80,18 @@ public class ListController {
                             new DateTime().toDateTimeISO().toString()));
         }
     }
+    @GetMapping("/getCitiesByCountry")
+    public ResponseEntity<Object> getCitiesByCountry(@RequestParam String countryId) {
+        try {
+            List<City> orgs = listService.getCitiesByCountry(countryId);
+            return ResponseEntity.ok(orgs);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(
+                    new CustomErrorResponse(400,
+                            "getCitiesByCountry failed: " + e.getMessage(),
+                            new DateTime().toDateTimeISO().toString()));
+        }
+    }
 
     @GetMapping("/getCommunities")
     public ResponseEntity<Object> getCommunities() {
@@ -241,6 +253,90 @@ public class ListController {
                             new DateTime().toDateTimeISO().toString()));
         }
     }
+    @GetMapping("/getAllOrganizationUsers")
+    public ResponseEntity<Object> getAllOrganizationUsers(@RequestParam String organizationId) {
+        try {
+            List<User> projects = listService.getAllOrganizationUsers(organizationId);
+            return ResponseEntity.ok(projects);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(
+                    new CustomErrorResponse(400,
+                            "getAllOrganizationUsers failed: " + e.getMessage(),
+                            new DateTime().toDateTimeISO().toString()));
+        }
+    }
+    @GetMapping("/getAllOrganizationActivity")
+    public ResponseEntity<Object> getAllOrganizationActivity(@RequestParam String organizationId) {
+        try {
+            List<ActivityModel> projects = listService.getOrganizationActivity(organizationId);
+            return ResponseEntity.ok(projects);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(
+                    new CustomErrorResponse(400,
+                            "getAllOrganizationActivity failed: " + e.getMessage(),
+                            new DateTime().toDateTimeISO().toString()));
+        }
+    }
+    @GetMapping("/getAllOrganizationPhotos")
+    public ResponseEntity<Object> getAllOrganizationPhotos(@RequestParam String organizationId) {
+        try {
+            List<Photo> projects = listService.getAllOrganizationPhotos(organizationId);
+            return ResponseEntity.ok(projects);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(
+                    new CustomErrorResponse(400,
+                            "getAllOrganizationProjects failed: " + e.getMessage(),
+                            new DateTime().toDateTimeISO().toString()));
+        }
+    }
+    @GetMapping("/getAllOrganizationVideos")
+    public ResponseEntity<Object> getAllOrganizationVideos(@RequestParam String organizationId) {
+        try {
+            List<Video> projects = listService.getAllOrganizationVideos(organizationId);
+            return ResponseEntity.ok(projects);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(
+                    new CustomErrorResponse(400,
+                            "getAllOrganizationVideos failed: " + e.getMessage(),
+                            new DateTime().toDateTimeISO().toString()));
+        }
+    }
+    @GetMapping("/getAllOrganizationAudios")
+    public ResponseEntity<Object> getAllOrganizationAudios(@RequestParam String organizationId) {
+        try {
+            List<Audio> projects = listService.getAllOrganizationAudios(organizationId);
+            return ResponseEntity.ok(projects);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(
+                    new CustomErrorResponse(400,
+                            "getAllOrganizationAudios failed: " + e.getMessage(),
+                            new DateTime().toDateTimeISO().toString()));
+        }
+    }
+    @GetMapping("/getAllOrganizationPositions")
+    public ResponseEntity<Object> getAllOrganizationPositions(@RequestParam String organizationId) {
+        try {
+            List<ProjectPosition> projects = listService.getAllOrganizationPositions(organizationId);
+            return ResponseEntity.ok(projects);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(
+                    new CustomErrorResponse(400,
+                            "getAllOrganizationPositions failed: " + e.getMessage(),
+                            new DateTime().toDateTimeISO().toString()));
+        }
+    }
+    @GetMapping("/getAllOrganizationPolygons")
+    public ResponseEntity<Object> getAllOrganizationPolygons(@RequestParam String organizationId) {
+        try {
+            List<ProjectPolygon> projects = listService.getAllOrganizationPolygons(organizationId);
+            return ResponseEntity.ok(projects);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(
+                    new CustomErrorResponse(400,
+                            "getAllOrganizationPolygons failed: " + e.getMessage(),
+                            new DateTime().toDateTimeISO().toString()));
+        }
+    }
 
     @GetMapping("/getQuestionnairesByOrganization")
     public ResponseEntity<Object> getQuestionnairesByOrganization(@RequestParam String organizationId) {
@@ -267,17 +363,17 @@ public class ListController {
         }
     }
 
-    @GetMapping("/getAllOrganizationUsers")
-    public ResponseEntity<Object> getOrganizationUsers(@RequestParam String organizationId) {
-        try {
-            return ResponseEntity.ok(listService.getOrganizationUsers(organizationId));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(
-                    new CustomErrorResponse(400,
-                            "getAllOrganizationUsers failed: " + e.getMessage(),
-                            new DateTime().toDateTimeISO().toString()));
-        }
-    }
+//    @GetMapping("/getAllOrganizationUsers")
+//    public ResponseEntity<Object> getOrganizationUsers(@RequestParam String organizationId) {
+//        try {
+//            return ResponseEntity.ok(listService.getOrganizationUsers(organizationId));
+//        } catch (Exception e) {
+//            return ResponseEntity.badRequest().body(
+//                    new CustomErrorResponse(400,
+//                            "getAllOrganizationUsers failed: " + e.getMessage(),
+//                            new DateTime().toDateTimeISO().toString()));
+//        }
+//    }
 
     @GetMapping("/getOrganizationPhotos")
     public ResponseEntity<Object> getOrganizationPhotos(@RequestParam String organizationId, @RequestParam String startDate, @RequestParam String endDate) {
@@ -521,6 +617,18 @@ public class ListController {
             return ResponseEntity.badRequest().body(
                     new CustomErrorResponse(400,
                             "getGeofenceEventsByProjectPosition failed: " + e.getMessage(),
+                            new DateTime().toDateTimeISO().toString()));
+        }
+    }
+
+    @GetMapping("/getGeofenceEventsByOrganization")
+    public ResponseEntity<Object> getGeofenceEventsByOrganization(String organizationId) {
+        try {
+            return ResponseEntity.ok(listService.getGeofenceEventsByOrganization(organizationId));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(
+                    new CustomErrorResponse(400,
+                            "getGeofenceEventsByOrganization failed: " + e.getMessage(),
                             new DateTime().toDateTimeISO().toString()));
         }
     }
