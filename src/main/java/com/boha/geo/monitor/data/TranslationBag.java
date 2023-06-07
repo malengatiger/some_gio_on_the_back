@@ -4,7 +4,7 @@ import lombok.Data;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
-@Document("translationBags")
+@Document("TranslationBag")
 public class TranslationBag {
     private String stringToTranslate;
     private String source;

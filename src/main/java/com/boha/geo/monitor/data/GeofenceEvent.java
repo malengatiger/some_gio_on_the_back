@@ -5,7 +5,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
-@Document(collection = "geofenceEvents")
+@Document(collection = "GeofenceEvent")
 public class GeofenceEvent {
     private String _partitionKey;
     @Id

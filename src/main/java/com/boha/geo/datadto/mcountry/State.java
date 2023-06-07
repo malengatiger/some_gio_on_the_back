@@ -5,7 +5,7 @@ import lombok.Data;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
-@Document("states")
+@Document("State")
 public class State {
     private String stateId;
     private String countryId;

@@ -7,7 +7,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.List;
 
 @Data
-@Document(collection = "userCounts")
+@Document(collection = "UserCounts")
 
 public class UserCounts {
     private String _partitionKey;

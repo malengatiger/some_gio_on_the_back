@@ -107,10 +107,11 @@ public class MonitorAuthenticationFilter extends OncePerRequestFilter {
 
             if (mToken != null) {
                 String userId = mToken.getUid();
+
                 User user = userRepository.findByUserId(userId);
                 if (user == null) {
-                    LOGGER.info("\uD83D\uDE21 \uD83D\uDE21 \uD83D\uDE21 request has been forbidden, user unknown");
-                    sendError(httpServletResponse, "request has been forbidden, user unknown");
+                    LOGGER.info("\uD83D\uDE21 \uD83D\uDE21 \uD83D\uDE21  user unknown, possible new registration");
+                    doFilter(httpServletRequest, httpServletResponse, filterChain);
                     return;
                 }
                 boolean subscriptionIsValid = false;

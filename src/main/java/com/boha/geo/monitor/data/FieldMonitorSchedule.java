@@ -5,7 +5,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
-@Document(collection = "fieldMonitorSchedules")
+@Document(collection = "FieldMonitorSchedule")
 public class FieldMonitorSchedule {
     private String  _partitionKey;
     @Id

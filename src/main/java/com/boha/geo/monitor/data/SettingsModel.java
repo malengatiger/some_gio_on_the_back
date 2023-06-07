@@ -5,7 +5,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
-@Document("settings")
+@Document("SettingsModel")
 public class SettingsModel {
     private String  _partitionKey;
     @Id

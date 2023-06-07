@@ -6,7 +6,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
-@Document("appErrors")
+@Document("AppError")
 public class AppError {
     private String  _partitionKey;
     @Id

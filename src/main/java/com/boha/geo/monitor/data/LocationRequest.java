@@ -5,7 +5,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
-@Document("locationRequests")
+@Document("LocationRequest")
 public class LocationRequest {
     private String  _partitionKey;
     @Id

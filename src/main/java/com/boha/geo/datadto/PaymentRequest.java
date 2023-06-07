@@ -6,7 +6,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
-@Document("paymentRequests")
+@Document("PaymentRequest")
 public class PaymentRequest {
     private String  _partitionKey;
     @Id

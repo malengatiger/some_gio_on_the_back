@@ -10,7 +10,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
 @Data
-@Document(collection = "communities")
+@Document(collection = "Community")
 public class Community {
     private String  _partitionKey;
     @Id

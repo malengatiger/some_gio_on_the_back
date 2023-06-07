@@ -4,7 +4,7 @@ import lombok.Data;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
-@Document("subscriptions")
+@Document("GioSubscription")
 public class GioSubscription {
     private String subscriptionId;
     private String organizationId;

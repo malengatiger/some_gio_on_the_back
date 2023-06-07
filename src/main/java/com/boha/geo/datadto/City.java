@@ -6,7 +6,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
-@Document(collection = "cities")
+@Document(collection = "City")
 public class City implements Comparable<City> {
 
     private String _partitionKey;

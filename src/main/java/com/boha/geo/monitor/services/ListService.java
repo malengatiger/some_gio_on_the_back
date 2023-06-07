@@ -1062,7 +1062,7 @@ public class ListService {
     public List<com.boha.geo.monitor.data.mcountry.Country> getCountries() {
 
         List<com.boha.geo.monitor.data.mcountry.Country> mList = countryRepository.findAll();
-
+        LOGGER.info(E.LEAF+ " getCountries found: " + mList.size());
         return mList;
     }
 

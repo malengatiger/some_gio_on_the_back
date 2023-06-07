@@ -31,7 +31,7 @@ CB26FCD87A60
         TokenNotificationUrl.
  */
 @Data
-@Document(collection = "ozowPaymentRequests")
+@Document(collection = "OzowPaymentRequest")
 public class OzowPaymentRequest {
     private String SiteCode, CountryCode, CurrencyCode,
             TransactionReference, BankReference;

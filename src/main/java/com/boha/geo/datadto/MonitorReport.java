@@ -14,7 +14,7 @@ import java.util.List;
 
  */
 @Data
-@Document(collection = "monitorReports")
+@Document(collection = "MonitorReport")
 public class MonitorReport {
     private String  _partitionKey;
     @Id

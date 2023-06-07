@@ -100,9 +100,10 @@ public class SecretManagerService {
 
         String m =  this.secretManagerTemplate.getSecretString(
                 "sm://"+realmSecretsName+"/"+realmSecretsVersion);
+        String mongoString = m.trim();
 
-        LOGGER.info(E.RED_APPLE+E.RED_APPLE+E.RED_APPLE+E.RED_APPLE + m);
-        return m;
+        LOGGER.info(E.RED_APPLE+E.RED_APPLE+E.RED_APPLE+E.RED_APPLE + mongoString);
+        return mongoString;
     }
 
 }

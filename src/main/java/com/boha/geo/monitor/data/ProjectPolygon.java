@@ -7,7 +7,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.List;
 
 @Data
-@Document(collection = "projectPolygons")
+@Document(collection = "ProjectPolygon")
 public class ProjectPolygon {
     private String  _partitionKey;
     @Id

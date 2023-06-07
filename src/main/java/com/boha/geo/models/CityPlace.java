@@ -9,7 +9,7 @@ import java.util.ArrayList;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Document(collection = "cityPlaces")
+@Document(collection = "CityPlace")
 
 public class CityPlace implements Comparable<CityPlace>{
     private String name;

@@ -130,6 +130,9 @@ public class MessageService {
     }
 
     public int sendMessage(ActivityModel activityModel) throws FirebaseMessagingException {
+        if (activityModel == null) {
+            return 0;
+        }
         String topic = "activities_" + activityModel.getOrganizationId();
 
         Message message = buildMessage("activity",
@@ -139,6 +142,9 @@ public class MessageService {
     }
 
     public int sendMessage(Photo photo) throws FirebaseMessagingException {
+        if (photo == null) {
+            return 0;
+        }
         String topic = "photos_" + photo.getOrganizationId();
         Notification notification = Notification.builder()
                 .setBody(photo.getTranslatedMessage())
@@ -151,6 +157,9 @@ public class MessageService {
     }
 
     public int sendMessage(SettingsModel settingsModel) throws FirebaseMessagingException {
+        if (settingsModel == null) {
+            return 0;
+        }
         String topic = "settings_" + settingsModel.getOrganizationId();
         Notification notification = Notification.builder()
                 .setBody(settingsModel.getTranslatedMessage())
@@ -164,6 +173,9 @@ public class MessageService {
     }
 
     public int sendMessage(GeofenceEvent geofenceEvent) throws FirebaseMessagingException {
+        if (geofenceEvent == null) {
+            return 0;
+        }
         String topic = "geofenceEvents_" + geofenceEvent.getOrganizationId();
 
         Notification notification = Notification.builder()
@@ -178,6 +190,9 @@ public class MessageService {
     }
 
     public int sendMessage(Audio audio) throws FirebaseMessagingException {
+        if (audio == null) {
+            return 0;
+        }
         String topic = "audios_" + audio.getOrganizationId();
 
         Notification notification = Notification.builder()
@@ -191,6 +206,9 @@ public class MessageService {
     }
 
     public int sendMessage(LocationRequest locationRequest) throws FirebaseMessagingException {
+        if (locationRequest == null) {
+            return 0;
+        }
         String topic = "locationRequests_" + locationRequest.getOrganizationId();
 
         Notification notification = Notification.builder()
@@ -207,6 +225,9 @@ public class MessageService {
     }
 
     public int sendMessage(LocationResponse locationResponse) throws FirebaseMessagingException {
+        if (locationResponse == null) {
+            return 0;
+        }
         String topic = "locationResponses_" + locationResponse.getOrganizationId();
 
         Notification notification = Notification.builder()
@@ -222,6 +243,9 @@ public class MessageService {
     }
 
     public int sendMessage(Video video) throws FirebaseMessagingException {
+        if (video == null) {
+            return 0;
+        }
         String topic = "videos_" + video.getOrganizationId();
 
         Notification notification = Notification.builder()
@@ -236,6 +260,9 @@ public class MessageService {
     }
 
     public int sendMessage(Condition condition) throws FirebaseMessagingException {
+        if (condition == null) {
+            return 0;
+        }
         String topic = "conditions_" + condition.getOrganizationId();
         Message message = buildMessage("condition", topic, G.toJson(condition));
 
@@ -269,6 +296,9 @@ public class MessageService {
     }
 
     public int sendMessage(Project project) throws FirebaseMessagingException {
+        if (project == null) {
+            return 0;
+        }
         String topic = "projects_" + project.getOrganizationId();
 
         Notification notification = Notification.builder()
@@ -281,6 +311,9 @@ public class MessageService {
     }
 
     public int sendMessage(User user) throws FirebaseMessagingException {
+        if (user == null) {
+            return 0;
+        }
         String topic = "users_" + user.getOrganizationId();
         Notification notification = Notification.builder()
                 .setBody(user.getTranslatedMessage())

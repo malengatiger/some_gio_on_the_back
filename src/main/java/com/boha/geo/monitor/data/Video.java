@@ -6,7 +6,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
-@Document(collection = "videos")
+@Document(collection = "Video")
 public class Video implements GioMediaInterface {
     private String _partitionKey;
     @Id

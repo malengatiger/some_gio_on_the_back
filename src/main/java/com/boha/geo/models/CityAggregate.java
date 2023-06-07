@@ -9,7 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Document(collection = "cityAggregates")
+@Document(collection = "CityAggregate")
 public class CityAggregate implements Comparable<CityAggregate>{
     @Id
     private String id;
