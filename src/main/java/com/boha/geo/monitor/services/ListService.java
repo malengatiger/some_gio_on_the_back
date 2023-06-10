@@ -6,17 +6,22 @@ import com.boha.geo.repos.*;
 import com.boha.geo.util.E;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.Filters;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.bson.Document;
 import org.joda.time.DateTime;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.data.geo.*;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.NearQuery;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
@@ -83,6 +88,8 @@ public class ListService {
     private final FieldMonitorScheduleRepository fieldMonitorScheduleRepository;
 
     private final MongoTemplate mongoTemplate;
+    final MongoClient mongoClient;
+
 
     static final double lat = 0.0144927536231884; // degrees latitude per mile
     static final double lon = 0.0181818181818182; // degrees longitude per mile
@@ -240,6 +247,7 @@ public class ListService {
         List<ActivityModel> activities = mongoTemplate.find(query, ActivityModel.class);
         return activities;
     }
+
     public List<ActivityModel> getOrganizationActivity(String organizationId) {
 
         List<ActivityModel> activities = activityModelRepository
@@ -692,11 +700,14 @@ public class ListService {
         for (GeoResult<City> city : cities) {
             mList.add(city.getContent());
         }
+        LOGGER.info(E.LEAF + E.LEAF + E.LEAF + E.LEAF + E.LEAF + " Cities found around location with radius: "
+                + radiusInKM + " km; found " + mList.size() + " cities");
+        for (City city : mList) {
+            LOGGER.info(E.LEAF + E.LEAF + " city: " + city.getName() + ", " + E.RED_APPLE + city.getStateName() + " - " + city.getCountryName());
+        }
         return mList;
     }
 
-
-    MongoClient mongoClient;
 
     public int countPhotosByProject(String projectId) {
 
@@ -770,38 +781,71 @@ public class ListService {
         return res;
     }
 
-    public List<ProjectPosition> findProjectPositionsByLocation(String organizationId, double latitude, double longitude, double radiusInKM) {
-        Point point = new Point(longitude, latitude);
-        Distance distance = new Distance(radiusInKM, Metrics.KILOMETERS);
-//        if (projectPositionRepository == null) {
-//            return new ArrayList<>();
-//        }
+    public List<ProjectPosition> findProjectPositionsByLocation(double latitude, double longitude, double radiusInKM) {
 
-        NearQuery nearQuery = NearQuery.near(point).maxDistance(50, Metrics.MILES);
+        List<ProjectPosition> mList = new ArrayList<>();
+        try {
+            MongoCollection<Document> collection = mongoClient.getDatabase("mongo_geo").getCollection("ProjectPosition");
 
-        GeoResults<ProjectPosition> positions = mongoTemplate.geoNear(nearQuery, ProjectPosition.class);
-//        List<ProjectPosition> positions = projectPositionRepository.findByPositionNear(point, distance);
+            FindIterable<Document> result = collection.find(
+                    Filters.geoWithinCenter("position", longitude, latitude, radiusInKM));
+            LOGGER.info(E.RED_DOT + E.RED_DOT + " position documents found in search: " + result.toString());
 
-        List<ProjectPosition> mPositions = new ArrayList<>();
-        if (positions == null) {
-            return mPositions;
-        }
-        for (GeoResult<ProjectPosition> position : positions) {
-            if (position.getContent().getOrganizationId().equalsIgnoreCase(organizationId)) {
-                mPositions.add(position.getContent());
+            for (Document document : result) {
+                String pp = document.toJson();
+                LOGGER.info(E.RED_DOT + E.RED_DOT + " position json may not be cool: " + pp);
+
+                JSONObject obj = new JSONObject(pp);
+                ProjectPosition px = new ProjectPosition();
+                px.setProjectPositionId(obj.getString("projectPositionId"));
+                px.setProjectId(obj.getString("projectId"));
+                px.setOrganizationId(obj.getString("organizationId"));
+                px.setOrganizationName(obj.getString("organizationName"));
+                px.setName(obj.getString("name"));
+                dance(obj, px);
+                px.setCreated(obj.getString("created"));
+                JSONArray arr = obj.getJSONArray("nearestCities");
+                List<String> nearest = new ArrayList<>();
+                for (int i = 0; i < arr.length(); i++) {
+                    String city = arr.getString(i);
+                    nearest.add(city);
+                }
+                px.setNearestCities(nearest);
+                LOGGER.info(E.BROCCOLI + E.BROCCOLI + " PROJECT_POSITION: " + G.toJson(px));
+                mList.add(px);
             }
+            LOGGER.info(E.BLUE_BIRD + E.BLUE_BIRD + " Locations found: " + mList.size());
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        return mList;
+    }
 
-        return mPositions;
+    private static void dance(JSONObject obj, ProjectPosition px) {
+        try {
+
+            if (obj.getJSONObject("userId").toString() != null) {
+                px.setUserId(obj.getString("userId"));
+            }
+            if (obj.getJSONObject("userName").toString() != null) {
+                px.setUserId(obj.getString("userName"));
+            }
+            if (obj.getJSONObject("userUrl").toString() != null) {
+                px.setUserId(obj.getString("userUrl"));
+            }
+            if (obj.getJSONObject("caption").toString() != null) {
+                px.setCaption(obj.getString("caption"));
+            }
+        } catch (Exception e) {
+            LOGGER.error(E.RED_DOT+E.RED_DOT+E.RED_DOT+E.RED_DOT+" Data Error: " + e.getMessage());
+        }
     }
 
     public List<ProjectPosition> getProjectPositions(String projectId, String startDate, String endDate) {
         Criteria c = Criteria.where("projectId").is(projectId)
                 .and("created").gte(startDate).lte(endDate);
         Query query = new Query(c);
-        List<ProjectPosition> mList = mongoTemplate.find(query, ProjectPosition.class);
-
-        return mList;
+        return mongoTemplate.find(query, ProjectPosition.class);
     }
 
     public List<ProjectPolygon> getProjectPolygons(String projectId, String startDate, String endDate) {
@@ -902,17 +946,22 @@ public class ListService {
 
         return projectRepository.findByOrganizationId(organizationId);
     }
+
     public List<Photo> getAllOrganizationPhotos(String organizationId) {
 
         return photoRepository.findByOrganizationId(organizationId);
-    } public List<Video> getAllOrganizationVideos(String organizationId) {
+    }
+
+    public List<Video> getAllOrganizationVideos(String organizationId) {
 
         return videoRepository.findByOrganizationId(organizationId);
     }
+
     public List<Audio> getAllOrganizationAudios(String organizationId) {
 
         return audioRepository.findByOrganizationId(organizationId);
     }
+
     public List<User> getAllOrganizationUsers(String organizationId) {
 
         return userRepository.findByOrganizationId(organizationId);
@@ -927,6 +976,7 @@ public class ListService {
 
         return projectPolygonRepository.findByOrganizationId(organizationId);
     }
+
     public List<SettingsModel> getOrganizationSettings(String organizationId) {
 
         List<SettingsModel> mList = settingsModelRepository.findByOrganizationId(organizationId);
@@ -1062,7 +1112,7 @@ public class ListService {
     public List<com.boha.geo.monitor.data.mcountry.Country> getCountries() {
 
         List<com.boha.geo.monitor.data.mcountry.Country> mList = countryRepository.findAll();
-        LOGGER.info(E.LEAF+ " getCountries found: " + mList.size());
+        LOGGER.info(E.LEAF + " getCountries found: " + mList.size());
         return mList;
     }
 

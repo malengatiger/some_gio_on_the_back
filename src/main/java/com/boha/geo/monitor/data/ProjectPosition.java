@@ -14,15 +14,18 @@ public class ProjectPosition {
     private String projectId;
     private String projectPositionId;
     private String organizationId;
+    private String organizationName;
     private Position position;
     private String projectName;
     private String caption;
     private String name;
     private String created;
     private PlaceMark placemark;
-    private List<City> nearestCities;
+    private List<String> nearestCities;
     private String userId;
     private String userName;
+    private String userUrl;
+
     private String possibleAddress;
     private String translatedMessage;
     private String translatedTitle;

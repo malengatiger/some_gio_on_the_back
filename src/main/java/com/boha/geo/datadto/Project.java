@@ -21,5 +21,8 @@ public class Project {
     private String translatedMessage;
     private String translatedTitle;
     private String imageUrl;
+    private String userId;
+    private String userName;
+    private String userUrl;
 
 }

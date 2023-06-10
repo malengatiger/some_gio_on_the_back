@@ -12,7 +12,7 @@ public class GioSubscription {
     private String date;
     private long intDate;
     private int subscriptionType;
-    private User user;
+    private String user;
     private String updated;
     private long intUpdated;
     private int active = 0;

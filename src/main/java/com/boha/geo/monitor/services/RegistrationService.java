@@ -116,7 +116,7 @@ public class RegistrationService {
             pPos.setOrganizationId(organization.getOrganizationId());
             pPos.setProjectPositionId(UUID.randomUUID().toString());
             pPos.setPosition(position);
-            pPos.setNearestCities(list);
+//            pPos.setNearestCities(list);
 
             projectPositionRepository.insert(pPos);
             LOGGER.info(E.LEAF + E.LEAF + " Sample Organization Project Position added: " + p0.getName());

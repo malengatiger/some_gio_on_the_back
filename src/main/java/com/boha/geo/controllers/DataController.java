@@ -964,19 +964,7 @@ public class DataController {
         return ResponseEntity.ok(users);
     }
 
-    @GetMapping("/fixNearest")
-    public ResponseEntity<?> fixNearest(@RequestParam String countryId) throws Exception {
 
-        try {
-            return ResponseEntity.ok(dataService.fixNearest(countryId));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(
-                    new CustomErrorResponse(400,
-                            "fixNearest failed: " + e.getMessage(),
-                            new DateTime().toDateTimeISO().toString()));
-        }
-
-    }
     @GetMapping("/addCountriesStatesCitiesToDB")
     public ResponseEntity<?> addCountriesStatesCitiesToDB() throws Exception {
 

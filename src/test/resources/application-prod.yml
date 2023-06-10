@@ -19,6 +19,6 @@ server:
 spring:
     data:
         mongodb:
-            database: geo
+            database: mongo_geo
 storageBucket: thermal-effort-366015.appspot.com
 surnames: surnames.json

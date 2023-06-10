@@ -518,10 +518,10 @@ public class ListController {
     }
 
     @GetMapping("/findProjectPositionsByLocation")
-    public ResponseEntity<Object> findProjectPositionsByLocation(@RequestParam String organizationId, @RequestParam double latitude,
+    public ResponseEntity<Object> findProjectPositionsByLocation(@RequestParam double latitude,
                                                                  @RequestParam double longitude, @RequestParam double radiusInKM) {
         try {
-            List<ProjectPosition> positions = listService.findProjectPositionsByLocation(organizationId, latitude, longitude, radiusInKM);
+            List<ProjectPosition> positions = listService.findProjectPositionsByLocation(latitude, longitude, radiusInKM);
             return ResponseEntity.ok(positions);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(
@@ -530,6 +530,7 @@ public class ListController {
                             new DateTime().toDateTimeISO().toString()));
         }
     }
+
 
     @GetMapping("/getProjectConditions")
     public ResponseEntity<Object> getProjectConditions(@RequestParam String projectId, @RequestParam String startDate, @RequestParam String endDate) {

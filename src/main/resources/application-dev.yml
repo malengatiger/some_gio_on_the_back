@@ -4,7 +4,7 @@ mongoSecretsName: mongo
 mongoSecretsVersion: 1
 realmSecretsName: realm
 realmSecretsVersion: 2
-
+doIndex: 1
 mongoString: mongodb://localhost:27017
 my-app-secret-1: ${sm://application-secret/latest}
 placesAPIKeyName: places_api_key
@@ -23,6 +23,6 @@ server:
 spring:
     data:
         mongodb:
-            database: geo
+            database: mongo_geo
 storageBucket: thermal-effort-366015.appspot.com
 surnames: surnames.json

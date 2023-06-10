@@ -8,13 +8,10 @@ import com.google.gson.GsonBuilder;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.boot.web.server.WebServerFactoryCustomizer;
-import org.springframework.boot.web.servlet.server.ConfigurableServletWebServerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
@@ -42,6 +39,8 @@ public class GeoApplication implements ApplicationListener<ApplicationReadyEvent
 
     private final MongoService mongoService;
 
+    @Value("${doIndex}")
+    private int doIndex;
     private final FirebaseService firebaseService;
 
     public GeoApplication(MongoService mongoService, FirebaseService firebaseService) {
@@ -71,15 +70,18 @@ public class GeoApplication implements ApplicationListener<ApplicationReadyEvent
         logger.info(E.PEAR + E.PEAR + E.PEAR + E.PEAR +
                 " Total Endpoints: " + map.size() + "\n");
 
-            firebaseService.initializeFirebase();
+        firebaseService.initializeFirebase();
 
         try (final DatagramSocket datagramSocket = new DatagramSocket()) {
             datagramSocket.connect(InetAddress.getByName("8.8.8.8"), 12345);
             var addr = datagramSocket.getLocalAddress().getHostAddress();
             logger.info(E.PEAR + E.PEAR + E.PEAR + E.PEAR
                     + " datagramSocket: Current IP address : " + addr);
+            if (doIndex > 0) {
+                mongoService.initializeIndexes();
+            }
         } catch (SocketException | UnknownHostException e) {
-           //
+            //
         }
 
         InetAddress ip;
@@ -106,23 +108,23 @@ public class GeoApplication implements ApplicationListener<ApplicationReadyEvent
                 "service is provided a JWT based token which must accompany every request. The data is managed by a MongoDB Atlas database. ";
 
         String gpt = "Geo is a powerful mobile platform that provides a suite of tools for managing and supervising off-site workers, " +
-				"as well as a wide range of other use cases. It allows you to create tasks and assign them to teams, while tracking progress in " +
-				"real-time using multimedia files such as photos, videos, and audio recordings. The platform's mobile capabilities enable you to stay " +
-				"connected with your team via messaging and video conferencing tools, and monitor progress using a mobile command post. Geo's multimedia " +
-				"timeline aggregates all of the relevant data in one place, allowing you to visualize progress and make data-driven decisions. " +
-				"With Geo, you can leverage cutting-edge mobile technology to increase productivity, streamline workflows, and achieve better outcomes, " +
-				"no matter what kind of project you're working on.";
+                "as well as a wide range of other use cases. It allows you to create tasks and assign them to teams, while tracking progress in " +
+                "real-time using multimedia files such as photos, videos, and audio recordings. The platform's mobile capabilities enable you to stay " +
+                "connected with your team via messaging and video conferencing tools, and monitor progress using a mobile command post. Geo's multimedia " +
+                "timeline aggregates all of the relevant data in one place, allowing you to visualize progress and make data-driven decisions. " +
+                "With Geo, you can leverage cutting-edge mobile technology to increase productivity, streamline workflows, and achieve better outcomes, " +
+                "no matter what kind of project you're working on.";
 
-		String gpt1 = "Geo's platform is built on a robust backend that leverages Google Cloud Platform (GCP) to provide authentication, security, " +
-				"scalability, and other critical services. The platform uses MongoDB, a popular NoSQL database, to store and retrieve data, which " +
-				"enables it to scale quickly and handle large volumes of multimedia data. Geo also integrates with Firebase Cloud Messaging to provide " +
-				"push notifications, which enables near real-time interaction between users and the platform. This allows managers and supervisors to " +
-				"monitor progress and communicate with workers in real-time, regardless of their location. The platform's authentication and security " +
-				"services ensure that only authorized users can access the data, and that data is protected both in transit and at rest. " +
-				"Geo's scalable backend services make it a reliable platform for managing and supervising off-site workers, " +
-				"while also providing the flexibility to adapt to the needs of different types of projects and organizations.";
+        String gpt1 = "Geo's platform is built on a robust backend that leverages Google Cloud Platform (GCP) to provide authentication, security, " +
+                "scalability, and other critical services. The platform uses MongoDB, a popular NoSQL database, to store and retrieve data, which " +
+                "enables it to scale quickly and handle large volumes of multimedia data. Geo also integrates with Firebase Cloud Messaging to provide " +
+                "push notifications, which enables near real-time interaction between users and the platform. This allows managers and supervisors to " +
+                "monitor progress and communicate with workers in real-time, regardless of their location. The platform's authentication and security " +
+                "services ensure that only authorized users can access the data, and that data is protected both in transit and at rest. " +
+                "Geo's scalable backend services make it a reliable platform for managing and supervising off-site workers, " +
+                "while also providing the flexibility to adapt to the needs of different types of projects and organizations.";
 
-		String m = desc + "\n\n" + gpt + "\n\n" + gpt1;
+        String m = desc + "\n\n" + gpt + "\n\n" + gpt1;
 
         return new OpenAPI().info(new Info()
                 .title("Geo Monitor API")

@@ -452,7 +452,7 @@ public class DataService {
         am.setUserName(user.getName());
         am.setUserThumbnailUrl(user.getThumbnailUrl());
         am.setProjectName(null);
-        am.setUser(user);
+        am.setUser(G.toJson(user));
         am.setUserType(user.getUserType());
         am.setTranslatedUserType(null);
 
@@ -528,13 +528,13 @@ public class DataService {
         am.setUserType(gio.getUserType());
         //
         if (gio instanceof Photo) {
-            am.setPhoto((Photo) gio);
+            am.setPhoto(G.toJson((Photo) gio));
         }
         if (gio instanceof Video) {
-            am.setVideo((Video) gio);
+            am.setVideo(G.toJson((Video) gio));
         }
         if (gio instanceof Audio) {
-            am.setAudio((Audio) gio);
+            am.setAudio(G.toJson((Audio) gio));
         }
 
         am.setUserType(gio.getUserType());
@@ -602,7 +602,7 @@ public class DataService {
         am.setOrganizationId(orgMessage.getOrganizationId());
         am.setUserName(orgMessage.getAdminName());
         am.setProjectName(orgMessage.getProjectName());
-        am.setOrgMessage(orgMessage);
+        am.setOrgMessage(G.toJson(orgMessage));
 
         addActivityModel(am);
         return 0;
@@ -633,85 +633,12 @@ public class DataService {
         return mList;
     }
 
-    public String fixNearest(String countryId) throws Exception {
-
-        DateTime start = DateTime.now();
-
-        List<City> cities = cityRepository.findByCountryId(countryId);
-        LOGGER.info(E.BLUE_DOT + " cities loaded: " + cities.size() + " ... get positions ...");
-
-        List<ProjectPosition> projectPositions = projectPositionRepository.findAll();
-        LOGGER.info(E.BLUE_DOT + " projectPositions listed: " + projectPositions.size());
-
-        try {
-            for (ProjectPosition pp : projectPositions) {
-                pp.setNearestCities(new ArrayList<>());
-                List<City> list = findCitiesByLocation(pp.getPosition()
-                        .getCoordinates().get(1), pp.getPosition().getCoordinates().get(0), 5);
-                for (City city : list) {
-                    pp.getNearestCities().add(city);
-                }
-                //update pp
-                projectPositionRepository.save(pp);
-                LOGGER.info(E.BLUE_DOT + " projectPosition updated ... " + pp.getProjectName()
-                        + " with \uD83D\uDECE \uD83D\uDECE " + pp.getNearestCities().size() + " nearest cities");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        LOGGER.info(E.BLUE_DOT + " starting to update projectPolygons ... ");
-
-        List<ProjectPolygon> projectPolygons = projectPolygonRepository.findAll();
-        LOGGER.info(E.BLUE_DOT + " projectPolygons listed: " + projectPolygons.size());
-
-        try {
-            for (ProjectPolygon pp : projectPolygons) {
-                pp.setNearestCities(new ArrayList<>());
-                List<City> unfiltered = new ArrayList<>();
-                List<Position> positions = new ArrayList<>();
-                LOGGER.info(E.BROCCOLI + E.BROCCOLI + " projectPolygon existing positions: " + pp.getPositions().size());
-
-                for (Position p : pp.getPositions()) {
-                    p.setLatitude(p.getCoordinates().get(1));
-                    p.setLongitude(p.getCoordinates().get(0));
-                    positions.add(p);
-                    List<City> list = findCitiesByLocation(p
-                            .getCoordinates().get(1), p.getCoordinates().get(0), 5);
-                    unfiltered.addAll(list);
-                }
-                pp.setPositions(positions);
-                LOGGER.info(E.BROCCOLI + E.BROCCOLI + " unfiltered nearest cities for polygon: " + unfiltered.size());
-                HashMap<String, City> map = new HashMap<>();
-                for (City city : unfiltered) {
-                    if (!map.containsKey(city.getCityId())) {
-                        map.put(city.getCityId(), city);
-                    }
-                }
-                List<City> filtered = map.values().stream().toList();
-                LOGGER.info(E.BROCCOLI + E.BROCCOLI + " filtered cities: " + filtered.size() + " : organizationId: " + pp.getOrganizationId());
-                //update pp
-                pp.setNearestCities(filtered);
-                projectPolygonRepository.save(pp);
-                LOGGER.info(E.BLUE_DOT + " projectPolygon updated ... " + pp.getProjectName()
-                        + " with \uD83D\uDECE \uD83D\uDECE " + pp.getNearestCities().size() + " nearest cities");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        DateTime end = DateTime.now();
-        Duration duration = new Duration(start, end);
-        LOGGER.info(E.BLUE_DOT + E.BLUE_DOT + E.BLUE_DOT + E.BLUE_DOT
-                + " fix job complete! ... " + duration.getStandardSeconds() + " seconds or "
-                + duration.getStandardMinutes() + " minutes elapsed " + E.BLUE_DOT);
-
-        return "Nearest cities fixed up. Yo!";
-    }
 
     public int addProjectPosition(ProjectPosition projectPosition) throws Exception {
 
         List<City> list = findCitiesByLocation(projectPosition.getPosition()
                 .getCoordinates().get(1), projectPosition.getPosition().getCoordinates().get(0), 10);
-        projectPosition.setNearestCities(list);
+//        projectPosition.setNearestCities(list);
         ProjectPosition m = projectPositionRepository.save(projectPosition);
 
         messageService.sendMessage(m);
@@ -731,7 +658,7 @@ public class DataService {
         am.setOrganizationId(projectPosition.getOrganizationId());
         am.setUserName(projectPosition.getUserName());
         am.setProjectName(projectPosition.getProjectName());
-        am.setProjectPosition(projectPosition);
+        am.setProjectPosition(G.toJson(projectPosition));
 
         addActivityModel(am);
 
@@ -779,7 +706,7 @@ public class DataService {
             am.setUserThumbnailUrl(user.getThumbnailUrl());
         }
         am.setProjectName(projectPolygon.getProjectName());
-        am.setProjectPolygon(projectPolygon);
+        am.setProjectPolygon(G.toJson(projectPolygon));
 
         addActivityModel(am);
 
@@ -806,7 +733,7 @@ public class DataService {
         am.setUserName(geofenceEvent.getUser().getName());
         am.setUserThumbnailUrl(geofenceEvent.getUser().getThumbnailUrl());
         am.setProjectName(geofenceEvent.getProjectName());
-        am.setGeofenceEvent(geofenceEvent);
+        am.setGeofenceEvent(G.toJson(geofenceEvent));
 
         addActivityModel(am);
         return 0;
@@ -826,7 +753,7 @@ public class DataService {
         am.setOrganizationId(project.getOrganizationId());
         am.setUserName(null);
         am.setProjectName(project.getName());
-        am.setProject(project);
+        am.setProject(G.toJson(project));
 
         addActivityModel(am);
         messageService.sendMessage(m);
@@ -850,7 +777,7 @@ public class DataService {
         am.setOrganizationId(locationResponse.getOrganizationId());
         am.setUserName(locationResponse.getUserName());
         am.setProjectName(null);
-        am.setLocationResponse(locationResponse);
+        am.setLocationResponse(G.toJson(locationResponse));
         if (user != null) {
             am.setUserThumbnailUrl(user.getThumbnailUrl());
         }
@@ -878,7 +805,7 @@ public class DataService {
         am.setOrganizationId(locationRequest.getOrganizationId());
         am.setUserName(locationRequest.getUserName());
         am.setProjectName(null);
-        am.setLocationRequest(locationRequest);
+        am.setLocationRequest(G.toJson(locationRequest));
         if (user != null) {
             am.setUserThumbnailUrl(user.getThumbnailUrl());
         }
@@ -924,7 +851,7 @@ public class DataService {
         am.setOrganizationId(model.getOrganizationId());
         am.setUserName(model.getUserName());
         am.setUserThumbnailUrl(model.getUserThumbnailUrl());
-        am.setSettingsModel(model);
+        am.setSettingsModel(G.toJson(model));
         am.setProjectName(null);
 
         addActivityModel(am);

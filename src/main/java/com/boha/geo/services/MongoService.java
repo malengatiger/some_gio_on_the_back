@@ -1,9 +1,7 @@
 package com.boha.geo.services;
 
-import com.boha.geo.monitor.data.City;
-import com.boha.geo.monitor.data.Organization;
-import com.boha.geo.monitor.data.Position;
-import com.boha.geo.monitor.data.User;
+import com.boha.geo.models.GioSubscription;
+import com.boha.geo.monitor.data.*;
 import com.boha.geo.monitor.data.mcountry.Country;
 import com.boha.geo.monitor.data.mcountry.CountryBag;
 import com.boha.geo.monitor.data.mcountry.State;
@@ -512,48 +510,51 @@ public class MongoService {
 
     private void createCountryIndexes() {
         //add index
-        MongoCollection<Document> dbCollection = db.getCollection("countries");
+        MongoCollection<Document> dbCollection = db.getCollection(Country.class.getSimpleName());
 
         String result2 = dbCollection.createIndex(Indexes.ascending("name"),
                 new IndexOptions().unique(true));
-
+        logger.info(E.BLUE_DOT+E.BLUE_BIRD+ "Indexes created for Country");
 
     }
 
     private void createOrganizationIndexes() {
         //add index
-        MongoCollection<Document> dbCollection = db.getCollection("organizations");
+        MongoCollection<Document> dbCollection = db.getCollection(Organization.class.getSimpleName());
 
         String result2 = dbCollection.createIndex(Indexes.ascending("name"),
                 new IndexOptions().unique(true));
 
         dbCollection.createIndex(Indexes.ascending("organizationId"));
+        logger.info(E.BLUE_DOT+E.BLUE_BIRD+ "Indexes created for Organization");
 
     }
 
     private void createSettingsIndexes() {
         //add index
-        MongoCollection<Document> dbCollection = db.getCollection("settings");
+        MongoCollection<Document> dbCollection = db.getCollection(SettingsModel.class.getSimpleName());
 
         dbCollection.createIndex(Indexes.ascending("organizationId"));
         dbCollection.createIndex(Indexes.ascending("projectId"));
+        logger.info(E.BLUE_DOT+E.BLUE_BIRD+ "Indexes created for SettingsModel");
 
     }
 
     private void createProjectIndexes() {
         //add index
-        MongoCollection<Document> dbCollection = db.getCollection("projects");
+        MongoCollection<Document> dbCollection = db.getCollection(Project.class.getSimpleName());
 
         dbCollection.createIndex(Indexes.ascending("organizationId", "name"),
                 new IndexOptions().unique(true));
 
         dbCollection.createIndex(Indexes.ascending("organizationId"));
+        logger.info(E.BLUE_DOT+E.BLUE_BIRD+ "Indexes created for Project");
 
     }
 
     private void createProjectSummaryIndexes() {
         //add index
-        MongoCollection<Document> dbCollection = db.getCollection("projectSummaries");
+        MongoCollection<Document> dbCollection = db.getCollection(ProjectSummary.class.getSimpleName());
 
         dbCollection.createIndex(Indexes.ascending("organizationId", "date"),
                 new IndexOptions().unique(false));
@@ -562,71 +563,69 @@ public class MongoService {
                 new IndexOptions().unique(false));
 
         dbCollection.createIndex(Indexes.ascending("organizationId"));
-
         dbCollection.createIndex(Indexes.ascending("projectId"));
-
         dbCollection.createIndex(Indexes.ascending("date"));
+        logger.info(E.BLUE_DOT+E.BLUE_BIRD+ "Indexes created for ProjectSummary");
 
     }
 
     private void createUserIndexes() {
         //add index
-        MongoCollection<Document> dbCollection = db.getCollection("users");
+        MongoCollection<Document> dbCollection = db.getCollection(User.class.getSimpleName());
 
         dbCollection.createIndex(Indexes.ascending("email"),
                 new IndexOptions().unique(false));
 
-
         dbCollection.createIndex(Indexes.ascending("cellphone"));
-
-
         dbCollection.createIndex(Indexes.ascending("organizationId"));
-
+        logger.info(E.BLUE_DOT+E.BLUE_BIRD+ "Indexes created for User");
     }
 
     private void createCommunityIndexes() {
         //add index
-        MongoCollection<Document> dbCollection = db.getCollection("communities");
+        MongoCollection<Document> dbCollection = db.getCollection(Community.class.getSimpleName());
 
         dbCollection.createIndex(Indexes.ascending("name", "countryId"),
                 new IndexOptions().unique(true));
-
         dbCollection.createIndex(Indexes.ascending("countryId"));
+        logger.info(E.BLUE_DOT+E.BLUE_BIRD+ "Indexes created for Community");
 
     }
 
     private void createAudioIndexes() {
         //add index
-        MongoCollection<Document> dbCollection = db.getCollection("audios");
+        MongoCollection<Document> dbCollection = db.getCollection(Audio.class.getSimpleName());
 
         dbCollection.createIndex(Indexes.ascending("projectId"),
                 new IndexOptions().unique(false));
 
         dbCollection.createIndex(Indexes.ascending("userId"));
-
         dbCollection.createIndex(Indexes.geo2dsphere("position"));
         dbCollection.createIndex(Indexes.ascending("organizationId"));
+        logger.info(E.BLUE_DOT+E.BLUE_BIRD+ "Indexes created for Audio");
 
     }
 
     private void createSchedulesIndexes() {
         //add index
-        MongoCollection<Document> dbCollection = db.getCollection("fieldMonitorSchedules");
+        MongoCollection<Document> dbCollection = db.getCollection(FieldMonitorSchedule.class.getSimpleName());
 
         dbCollection.createIndex(Indexes.ascending("projectId"),
                 new IndexOptions().unique(false));
 
         dbCollection.createIndex(Indexes.ascending("userId"));
-
         dbCollection.createIndex(Indexes.geo2dsphere("position"));
+
+        logger.info(E.BLUE_DOT+E.BLUE_BIRD+ "Indexes created for FieldMonitorSchedule");
 
     }
 
     private void createStateIndex() {
-        MongoCollection<Document> dbCollection = db.getCollection("states");
+        MongoCollection<Document> dbCollection = db.getCollection(State.class.getSimpleName());
 
         dbCollection.createIndex(Indexes.ascending("countryId", "name"),
                 new IndexOptions().unique(true));
+        logger.info(E.BLUE_DOT+E.BLUE_BIRD+ "Indexes created for State");
 
     }
 
@@ -634,112 +633,105 @@ public class MongoService {
 
     private void createCityIndexes() {
         //add index
-        MongoCollection<Document> dbCollection = db.getCollection("cities");
+        MongoCollection<Document> dbCollection = db.getCollection(City.class.getSimpleName());
 
         dbCollection.createIndex(Indexes.geo2dsphere("position"));
 
         dbCollection.createIndex(Indexes.ascending("stateId"));
-
         dbCollection.createIndex(Indexes.ascending("countryId"));
-
         dbCollection.createIndex(Indexes.ascending("countryId", "stateId", "name"),
                 new IndexOptions().unique(true));
+
+        logger.info(E.BLUE_DOT+E.BLUE_BIRD+ "Indexes created for City");
 
 
     }
 
     private void createProjectPositionIndexes() {
         //add index
-        MongoCollection<Document> dbCollection = db.getCollection("projectPositions");
+        MongoCollection<Document> dbCollection = db.getCollection(ProjectPosition.class.getSimpleName());
         dbCollection.createIndex(Indexes.geo2dsphere("position"));
 
         dbCollection.createIndex(Indexes.ascending("projectId"));
 
         dbCollection.createIndex(Indexes.ascending("organizationId"));
+        logger.info(E.BLUE_DOT+E.BLUE_BIRD+ "Indexes created for ProjectPosition");
 
 
     }
 
     private void createLocationResponseIndexes() {
         //add index
-        MongoCollection<Document> dbCollection = db.getCollection("locationResponses");
+        MongoCollection<Document> dbCollection = db.getCollection(LocationResponse.class.getSimpleName());
         dbCollection.createIndex(Indexes.geo2dsphere("position"));
 
         dbCollection.createIndex(Indexes.ascending("userId"));
-
-
         dbCollection.createIndex(Indexes.ascending("organizationId"));
 
-
+        logger.info(E.BLUE_DOT+E.BLUE_BIRD+ "Indexes created for LocationResponse");
     }
 
     private void createGeofenceEventIndexes() {
         //add index
-        MongoCollection<Document> dbCollection = db.getCollection("geofenceEvents");
+        MongoCollection<Document> dbCollection = db.getCollection(GeofenceEvent.class.getSimpleName());
         dbCollection.createIndex(Indexes.geo2dsphere("position"));
 
         dbCollection.createIndex(Indexes.ascending("projectId"));
-
         dbCollection.createIndex(Indexes.ascending("organizationId"));
+
+        logger.info(E.BLUE_DOT+E.BLUE_BIRD+ "Indexes created for GeofenceEvent");
 
 
     }
 
     private void createRatingIndexes() {
         //add index
-        MongoCollection<Document> dbCollection = db.getCollection("ratings");
+        MongoCollection<Document> dbCollection = db.getCollection(Rating.class.getSimpleName());
         dbCollection.createIndex(Indexes.geo2dsphere("position"));
 
         dbCollection.createIndex(Indexes.ascending("projectId"));
-
         dbCollection.createIndex(Indexes.ascending("organizationId"));
 
-
+        logger.info(E.BLUE_DOT+E.BLUE_BIRD+ "Indexes created for Rating");
     }
 
     private void createProjectPolygonIndexes() {
         //add index
-        MongoCollection<Document> dbCollection = db.getCollection("projectPolygons");
+        MongoCollection<Document> dbCollection = db.getCollection(ProjectPolygon.class.getSimpleName());
         dbCollection.createIndex(Indexes.geo2dsphere("positions.coordinates"));
 
         dbCollection.createIndex(Indexes.ascending("projectId"));
-
         dbCollection.createIndex(Indexes.ascending("organizationId"));
-
+        logger.info(E.BLUE_DOT+E.BLUE_BIRD+ "Indexes created for ProjectPolygon");
 
     }
 
     private void createPhotoIndexes() {
         //add index
-        MongoCollection<Document> dbCollection = db.getCollection("photos");
+        MongoCollection<Document> dbCollection = db.getCollection(Photo.class.getSimpleName());
         dbCollection.createIndex(Indexes.geo2dsphere("projectPosition"));
 
         dbCollection.createIndex(Indexes.ascending("projectId"));
-
         dbCollection.createIndex(Indexes.ascending("organizationId"));
-
+        logger.info(E.BLUE_DOT+E.BLUE_BIRD+ "Indexes created for Photo");
 
     }
 
     private void createActivityIndexes() {
         //add index
-        MongoCollection<Document> dbCollection = db.getCollection("activities");
+        MongoCollection<Document> dbCollection = db.getCollection(ActivityModel.class.getSimpleName());
 
         dbCollection.createIndex(Indexes.ascending("projectId"));
-
         dbCollection.createIndex(Indexes.ascending("organizationId"));
-
         dbCollection.createIndex(Indexes.ascending("userId"));
-
-
         dbCollection.createIndex(Indexes.ascending("date"));
 
-
+        logger.info(E.BLUE_DOT+E.BLUE_BIRD+ "Indexes created for ActivityModel");
     }
 
     private void createSubscriptionIndexes() {
         //add index
-        MongoCollection<Document> dbCollection = db.getCollection("subscriptions");
+        MongoCollection<Document> dbCollection = db.getCollection(GioSubscription.class.getSimpleName());
 
         dbCollection.createIndex(Indexes.ascending("organizationId"));
 
@@ -747,6 +739,8 @@ public class MongoService {
 
         dbCollection.createIndex(Indexes.ascending("organizationName"),
                 new IndexOptions().unique(true));
+
+        logger.info(E.BLUE_DOT+E.BLUE_BIRD+ "Indexes created for GioSubscription");
 
     }
 
@@ -761,15 +755,13 @@ public class MongoService {
 
     private void createVideoIndexes() {
         //add index
-        MongoCollection<Document> dbCollection = db.getCollection("videos");
+        MongoCollection<Document> dbCollection = db.getCollection(Video.class.getSimpleName());
         dbCollection.createIndex(Indexes.geo2dsphere("projectPosition"));
 
         dbCollection.createIndex(Indexes.ascending("projectId"));
-
-
         dbCollection.createIndex(Indexes.ascending("organizationId"));
 
-
+        logger.info(E.BLUE_DOT+E.BLUE_BIRD+ "Indexes created for Video");
     }
 
     public void printOrganizations() {
